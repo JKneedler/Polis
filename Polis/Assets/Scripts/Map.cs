@@ -131,7 +131,7 @@ public class Map : MonoBehaviour {
           Vector2 worldLoc2 = tile.GetWorldLoc();
           Vector3 tilePos = new Vector3(worldLoc2.x, 0, worldLoc2.y);
           tilePos = new Vector3(tilePos.x + 0.5f, 0, tilePos.z + 0.5f);
-          GameObject tileObj = new GameObject();
+          GameObject tileObj;
           int rotateAmt = Random.Range(0, 4);
           Quaternion tileRot = Quaternion.Euler(0, 90 * rotateAmt, 0);
           char tileType = tile.GetTypeChar();
@@ -142,16 +142,20 @@ public class Map : MonoBehaviour {
               int tileNum = 0;
               if(flowerPercent < flowerCutoff) tileNum = 1;
               tileObj = (GameObject)Instantiate(grassTiles[tileNum], tilePos, tileRot);
+              tileObj.transform.parent = transform;
+              tile.SetTileObject(tileObj);
               if(tileType == 'F') GenerateResourcesOnTile(tile);
             } else {
               tileObj = (GameObject)Instantiate(edgeTiles[tileAutoID], tilePos, edgeTiles[tileAutoID].transform.rotation);
+              tileObj.transform.parent = transform;
+              tile.SetTileObject(tileObj);
             }
           } else if(tileType == 'W') {
             tileObj = (GameObject)Instantiate(clearTile, tilePos, clearTile.transform.rotation);
+            tileObj.transform.parent = transform;
+            tile.SetTileObject(tileObj);
             tileObj.SetActive(false);
           }
-          tileObj.transform.parent = transform;
-          tile.SetTileObject(tileObj);
         }
       }
       tiles = newTiles;
