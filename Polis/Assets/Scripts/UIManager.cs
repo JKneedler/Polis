@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour {
   public Text infoWindowDescription;
   public GameObject villagerWindow;
   public GameObject buildingWindow;
+  public GameObject resourcesWindow;
 
     // Start is called before the first frame update
     void Start() {
@@ -25,12 +26,12 @@ public class UIManager : MonoBehaviour {
 
     }
 
-    public void SetPopulation(int total, int max) {
-      populationText.text = "" + total + "/" + max;
+    public void SetPopulation(int total) {
+      populationText.text = "" + total;
     }
 
-    public void SetFood(int total, int max) {
-      foodText.text = "" + total + "/" + max;
+    public void SetFood(int total) {
+      foodText.text = "" + total;
     }
 
     public void SetWood(int total) {
@@ -62,5 +63,13 @@ public class UIManager : MonoBehaviour {
 
     public void DisplayBuildingWindow(Structure str) {
       buildingWindow.SetActive(true);
+    }
+
+    public void ToggleResourcesWindow() {
+      if(resourcesWindow.activeSelf) {
+        resourcesWindow.SetActive(false);
+      } else {
+        resourcesWindow.SetActive(true);
+      }
     }
 }

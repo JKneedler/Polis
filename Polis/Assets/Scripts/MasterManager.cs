@@ -65,6 +65,12 @@ public class MasterManager : MonoBehaviour {
           mouseOverScript = null;
         }
       }
+
+      if(Input.GetKey(KeyCode.Escape)) {
+        PressedNewMode(0);
+        ui.HideAllActiveObjectWindows();
+        activeObject = null;
+      }
     }
 
     void SetMousePosition(){

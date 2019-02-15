@@ -5,24 +5,21 @@ using UnityEngine;
 public class TownManager : MonoBehaviour {
 
   public int foodTotal;
-  public int foodStorageMax;
-  public int foodProductionRate;
-  public int population;
-  public int populationMax;
   public int woodTotal;
-  public int woodProductionRate;
   public int stoneTotal;
-  public int stoneProductionRate;
+  public int drachmaTotal;
   private UIManager ui;
   public GameObject canvas;
+  public List<Villager> villagers;
   public List<Structure> structures;
+  public List<Resource> resources;
+  public Resource wood;
+  public Resource stone;
 
     // Start is called before the first frame update
     void Start() {
       ui = canvas.GetComponent<UIManager>();
       SetUI();
-      UpdateResourceRates();
-      InvokeRepeating("ProduceResources", 1.0f, 2.0f);
     }
 
     // Update is called once per frame
@@ -31,44 +28,29 @@ public class TownManager : MonoBehaviour {
     }
 
     void SetUI() {
-      ui.SetPopulation(population, populationMax);
-      ui.SetFood(foodTotal, foodStorageMax);
-      ui.SetWood(woodTotal);
-      ui.SetStone(stoneTotal);
+      ui.SetPopulation(villagers.Count);
+      ui.SetFood(foodTotal);
+      ui.SetWood(wood.GetAmount());
+      ui.SetStone(stone.GetAmount());
     }
 
-    void ProduceResources() {
-      if(foodTotal < foodStorageMax) {
-        foodTotal += foodProductionRate;
-        if(foodTotal > foodStorageMax) foodTotal = foodStorageMax;
+    void SetFoodTotal() {
+      int newTotal = 0;
+      for(int i = 0; i < resources.Count; i++) {
+        if(resources[i].GetResourceType() == Resource.ResourceTypes.Food) {
+          newTotal += resources[i].GetAmount();
+        }
       }
-
-      woodTotal += woodProductionRate;
-      stoneTotal += stoneProductionRate;
+      foodTotal = newTotal;
       SetUI();
-    }
-
-    public void UpdateResourceRates() {
-      int foodRate = 0;
-      int woodRate = 0;
-      int stoneRate = 0;
-      for(int i = 0; i < structures.Count; i++) {
-        foodRate += structures[i].foodProdCur;
-        woodRate += structures[i].woodProdCur;
-        stoneRate += structures[i].stoneProdCur;
-      }
-      foodProductionRate = foodRate;
-      woodProductionRate = woodRate;
-      stoneProductionRate = stoneRate;
     }
 
     public void BuiltStructure(Structure str) {
       structures.Add(str);
-      UpdateResourceRates();
     }
 
     public void DestroyedStructure(Structure str) {
       structures.Remove(str);
-      UpdateResourceRates();
     }
+
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Villager : MonoBehaviour {
 
-  public enum Jobs {Citizen, Forester, StoneMiner}
+  public enum Jobs {Citizen, Forester, StoneMiner, Farmer}
   public Jobs curJob;
   public Structure curStructure;
   public float moveSpeed;
@@ -53,24 +53,14 @@ public class Villager : MonoBehaviour {
         case Jobs.Forester:
           if(atStructure) {
             //Deal with if no more resources in range
-            NaturalResource newNR = curStructure.GetRandomNaturalResource();
-            target = newNR.GetResourceObject().transform;
+            TreeResource newTree = curStructure.foresterData.GetRandomTree(curStructure.tilesInRange);
+            target = newTree.GetResourceObject().transform;
           } else {
             target = curStructure.gameObject.transform;
           }
           atTarget = false;
           break;
-        case Jobs.StoneMiner:
-          if(atStructure) {
-            //Deal with if no more resources in range
-            NaturalResource newNR = curStructure.GetRandomNaturalResource();
-            target = newNR.GetResourceObject().transform;
-          } else {
-            target = curStructure.gameObject.transform;
-          }
-          atTarget = false;
-          break;
-          default:
+        default:
           break;
       }
     }

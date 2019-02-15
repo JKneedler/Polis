@@ -106,12 +106,7 @@ public class Map : MonoBehaviour {
           Vector2 tilePos = procedTiles[i].GetMapLoc();
           float val = Mathf.PerlinNoise(tilePos.x/treePerlinScale + offsetX, tilePos.y/treePerlinScale + offsetY);
           if(val > treePerlinCutoff) {
-            // //Plain biome - maybe add certain texture for this
-            // float val2 = Mathf.PerlinNoise(tilePos.x/rockPerlinScale + offsetX, tilePos.y/rockPerlinScale + offsetY);
-            // if(val2 <= rockPerlinCutoff) {
-            //   procedTiles[i].SetNumResources(Mathf.RoundToInt((val2/rockPerlinCutoff) * (maxRocks - minRocks) + minRocks));
-            //   procedTiles[i].SetTypeChar('R');
-            // }
+            // Other Biome if I decide to put one in
           } else {
             //Forest Biome - separate texture for this possibly
             procedTiles[i].SetNumResources(Mathf.RoundToInt(treeNumCurve.Evaluate(1 - (val/treePerlinCutoff)) * (maxTrees - minTrees)));
@@ -176,10 +171,10 @@ public class Map : MonoBehaviour {
         //Determine Amount of Trees on Tile
         int treeSize = Mathf.CeilToInt(Random.Range(0f, 1f) * ((float)treeAmt/(float)maxTrees) * 3) - 1;
         int treeType = Random.Range(0, 2);
-        GameObject tree = (GameObject)Instantiate(treeModels[treeSize + (3*treeType)], new Vector3(posX, 0.05f, posY), resRot);
-        tree.transform.parent = resourceParent;
-        NaturalResource res = new NaturalResource(Structure.Resources.Tree, tree);
-        tile.AddResource(res);
+        GameObject treeObj = (GameObject)Instantiate(treeModels[treeSize + (3*treeType)], new Vector3(posX, 0.05f, posY), resRot);
+        treeObj.transform.parent = resourceParent;
+        TreeResource tree = new TreeResource(treeObj);
+        tile.AddResource(tree);
       }
     }
 
@@ -234,110 +229,4 @@ public class Map : MonoBehaviour {
         return true;
       }
     }
-}
-
-public class Tile {
-
-  public int autotileID;
-  private Vector2 mapLoc;
-  private char type;
-  private int numResources;
-  private GameObject tileObject;
-  private int MAP_CORRECTION_WIDTH;
-  private int MAP_CORRECTION_HEIGHT;
-  private bool canBuild;
-  private List<NaturalResource> resources;
-  private Material originalMat;
-
-  public Tile(Vector2 mapLoc, char type, int MAP_CORRECTION_WIDTH, int MAP_CORRECTION_HEIGHT) {
-    this.mapLoc = mapLoc;
-    this.type = type;
-    this.MAP_CORRECTION_WIDTH = MAP_CORRECTION_WIDTH;
-    this.MAP_CORRECTION_HEIGHT = MAP_CORRECTION_HEIGHT;
-    resources = new List<NaturalResource>();
-  }
-
-  public char GetTypeChar() {
-    return type;
-  }
-
-  public void SetTypeChar(char type) {
-    this.type = type;
-  }
-
-  public Vector2 GetMapLoc() {
-    return mapLoc;
-  }
-
-  public Vector2 GetWorldLoc() {
-    return new Vector2(mapLoc.x - MAP_CORRECTION_WIDTH, mapLoc.y - MAP_CORRECTION_HEIGHT);
-  }
-
-  public GameObject GetTileObject() {
-    return tileObject;
-  }
-
-  public void SetTileObject(GameObject tileObj) {
-    tileObject = tileObj;
-    originalMat = tileObj.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().material;
-  }
-
-  public void ChangeMaterial(Material mat) {
-    tileObject.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().material = mat;
-    if(autotileID == -1) {
-      tileObject.SetActive(true);
-    }
-  }
-
-  public void SetMaterialBackToOriginal() {
-    tileObject.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().material = originalMat;
-    if(autotileID == -1) {
-      tileObject.SetActive(false);
-    }
-  }
-
-  public int GetAutoTileID() {
-    return autotileID;
-  }
-
-  public void SetAutoTileID(int id) {
-    autotileID = id;
-    DetermineBuildStatus();
-  }
-
-  private void DetermineBuildStatus() {
-    if(autotileID == 15) {
-      canBuild = true;
-    } else {
-      canBuild = false;
-    }
-  }
-
-  public bool GetCanBuild() {
-    return canBuild;
-  }
-
-  public void SetCanBuild(bool newVal) {
-    canBuild = newVal;
-  }
-
-  public void AddResource(NaturalResource res) {
-    resources.Add(res);
-  }
-
-  public void RemoveResource(NaturalResource res) {
-    resources.Remove(res);
-  }
-
-  public List<NaturalResource> GetResourcesList() {
-    return resources;
-  }
-
-  public void SetNumResources(int amt) {
-    numResources = amt;
-  }
-
-  public int GetNumResources() {
-    return numResources;
-  }
 }

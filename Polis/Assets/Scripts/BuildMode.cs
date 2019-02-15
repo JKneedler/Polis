@@ -121,7 +121,7 @@ public class BuildMode : MonoBehaviour {
       }
       if(canBuild){
         Structure str = buildPlaceholder.GetComponent<Structure>();
-        str.Place();
+        str.Place(buildingTiles);
         buildPlaceholder.GetComponent<BoxCollider>().enabled = true;
         buildPlaceholder = null;
 
@@ -129,7 +129,6 @@ public class BuildMode : MonoBehaviour {
         for(int i = 0; i < buildingTiles.Count; i++){
           buildingTiles[i].ChangeMaterial(redMat);
           buildingTiles[i].SetCanBuild(false);
-          str.tilesOn.Add(buildingTiles[i]);
         }
 
         tm.BuiltStructure(str);

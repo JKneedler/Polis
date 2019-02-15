@@ -23,7 +23,7 @@ public class AssignMode : MonoBehaviour {
     public void AttemptToAssign(WorldDescriptor wd) {
       if(wd.gameObject.GetComponent<Structure>()) {
         Structure str = wd.gameObject.GetComponent<Structure>();
-        if(str.curWorkers != str.maxWorkers) {
+		if(str.CanAssignVillager()) {
           if(villToAssign.curJob != Villager.Jobs.Citizen) {
             villToAssign.curStructure.UnassignVillager(villToAssign);
           }
