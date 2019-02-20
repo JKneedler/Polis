@@ -15,10 +15,14 @@ public class TownManager : MonoBehaviour {
   public List<Resource> resources;
   public Resource wood;
   public Resource stone;
+  public Farming farmingD;
+  public Discipline fishingD;
 
     // Start is called before the first frame update
     void Start() {
       ui = canvas.GetComponent<UIManager>();
+      farmingD.assignedTiles = new List<Tile>();
+      fishingD.assignedTiles = new List<Tile>();
       SetUI();
     }
 

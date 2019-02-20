@@ -17,6 +17,7 @@ public class MasterManager : MonoBehaviour {
   private UIManager ui;
   private BuildMode buildMode;
   private AssignMode assignMode;
+  private TownManager tm;
   private bool showObjectInfo;
   private Tile hoverTile;
   public int mouseLocLayerMask = 1 << 9;
@@ -27,6 +28,7 @@ public class MasterManager : MonoBehaviour {
       ui = canvas.GetComponent<UIManager>();
       buildMode = gameObject.GetComponent<BuildMode>();
       assignMode = gameObject.GetComponent<AssignMode>();
+      tm = gameObject.GetComponent<TownManager>();
     }
 
     // Update is called once per frame
@@ -46,12 +48,11 @@ public class MasterManager : MonoBehaviour {
           buildMode.AttemptToBuild();
         }
       } else if(curMode == Mode.Assign) {
-
+        if(assignMode.assignMode == AssignMode.AssignModeTypes.TileToDiscipline) {
+          if(hoverTile != null)  assignMode.UpdateLandAssign(hoverTile);
+        }
         if(Input.GetButtonDown("Fire1") && !EventSystem.current.IsPointerOverGameObject()) {
-          if(mouseOverScript) {
-            assignMode.AttemptToAssign(mouseOverScript);
-          }
-          ChangeCurrentMode(Mode.Run);
+          assignMode.AttemptToAssign(mouseOverScript);
         }
       }
 
@@ -108,20 +109,38 @@ public class MasterManager : MonoBehaviour {
     }
 
     public void PressedNewMode(int modeNum) {
-      ChangeCurrentMode((Mode)modeNum);
+      ChangeCurrentMode((Mode)modeNum, -1);
     }
 
-    public void ChangeCurrentMode(Mode newMode) {
+    public void StartAssigningForDiscipline(int discNum) {
+      ChangeCurrentMode(Mode.Assign, discNum);
+    }
+
+    public void ChangeCurrentMode(Mode newMode, int discNum) {
       if(curMode == Mode.Build) {
         showObjectInfo = true;
         buildMode.EndBuildMode();
+      } else if(curMode == Mode.Assign) {
+        assignMode.EndAssignMode();
       }
 
       if(newMode == Mode.Build) {
         buildMode.StartBuildMode();
         showObjectInfo = false;
       } else if(newMode == Mode.Assign) {
-        assignMode.StartAssignMode(activeObject.gameObject.GetComponent<Villager>());
+        switch(discNum) {
+          case -1:
+            if(activeObject.objectType == WorldDescriptor.objectTypes.Villager) {
+              assignMode.StartVillagerAssignMode(activeObject.gameObject.GetComponent<Villager>());
+            }
+            break;
+          case 0:
+            assignMode.StartTileAssignMode(tm.farmingD);
+            break;
+          case 1:
+            assignMode.StartTileAssignMode(tm.fishingD);
+            break;
+        }
       }
 
       curMode = newMode;

@@ -4,21 +4,29 @@ using UnityEngine;
 
 public class Villager : MonoBehaviour {
 
+  // Should only be dictating how the person looks + UI information
   public enum Jobs {Citizen, Forester, StoneMiner, Farmer}
   public Jobs curJob;
+  public string villagerName;
+
   public Structure curStructure;
+  public Task curTask;
   public float moveSpeed;
-  public Transform target;
   public bool atTarget = false;
   public float minDist;
+
+  public Transform target;
   private MasterManager mm;
   private bool inAnimation;
   private bool atStructure;
-  public string villagerName;
+  public BuildingType test;
+  public ForesterData testFD;
 
   //Use if(target == curStructure.gameObject.transform.position) to get whether out or back at structure
 
     void Start() {
+      test = testFD;
+      test.TestInheritance();
       mm = GameObject.FindWithTag("GameController").GetComponent<MasterManager>();
     }
 

@@ -14,10 +14,12 @@ public class Tile {
   private bool canBuild;
   private List<TreeResource> trees;
   private Material originalMat;
+  public enum TileTypes {Grass, Forest, Water, Coast, FarmLand, Pasture};
+  public TileTypes tileTypeEnum;
 
   public Tile(Vector2 mapLoc, char type, int MAP_CORRECTION_WIDTH, int MAP_CORRECTION_HEIGHT) {
     this.mapLoc = mapLoc;
-    this.type = type;
+    SetTypeChar(type);
     this.MAP_CORRECTION_WIDTH = MAP_CORRECTION_WIDTH;
     this.MAP_CORRECTION_HEIGHT = MAP_CORRECTION_HEIGHT;
     trees = new List<TreeResource>();
@@ -29,6 +31,17 @@ public class Tile {
 
   public void SetTypeChar(char type) {
     this.type = type;
+    switch (type) {
+      case 'G':
+        tileTypeEnum = TileTypes.Grass;
+        break;
+      case 'W':
+        tileTypeEnum = TileTypes.Water;
+        break;
+      case 'F':
+        tileTypeEnum = TileTypes.Forest;
+        break;
+    }
   }
 
   public Vector2 GetMapLoc() {

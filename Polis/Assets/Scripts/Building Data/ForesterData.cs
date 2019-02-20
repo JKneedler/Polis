@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ForesterData {
+[System.Serializable]
+public class ForesterData : BuildingType {
 
   public TreeResource GetRandomTree(List<Tile> tilesInRange) {
     List<TreeResource> nearTrees = new List<TreeResource>();

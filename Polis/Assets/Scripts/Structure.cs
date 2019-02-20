@@ -5,7 +5,7 @@ using UnityEngine;
 public class Structure : MonoBehaviour {
 
   public Vector2 objScale;
-  public Villager.Jobs structureJob;
+  public Villager.Jobs structureJob; // should be within the subclass
   public int maxWorkers;
   public List<Villager> workers;
   public List<Tile> tilesOn;
@@ -13,6 +13,7 @@ public class Structure : MonoBehaviour {
   public int tileRange;
   private TownManager tm;
   private Map map;
+  public Queue<Task> tasks;
 
   public enum BuildingTypes {Foresting, Mining, Farming, Livestock, Fishing};
   public BuildingTypes buildingType;
@@ -42,6 +43,7 @@ public class Structure : MonoBehaviour {
         case BuildingTypes.Mining:
           break;
         case BuildingTypes.Farming:
+          farmData.farmingTiles = new List<Tile>();
           break;
         case BuildingTypes.Livestock:
           break;
@@ -83,8 +85,8 @@ public class Structure : MonoBehaviour {
     public void GetTilesInRange() {
       for(int i = 1; i < tileRange + 1; i++) {
         for(int x = -i; x < i + 1; x++) {
-          Tile tilePlusY = map.GetTileFromWorldPos((int)transform.position.x + x, (int)transform.position.z + (tileRange - Mathf.Abs(x)));
-          Tile tileMinusY = map.GetTileFromWorldPos((int)transform.position.x + x, (int)transform.position.z - (tileRange - Mathf.Abs(x)));
+          Tile tilePlusY = map.GetTileFromWorldPos((int)transform.position.x + x, (int)transform.position.z + (i - Mathf.Abs(x)));
+          Tile tileMinusY = map.GetTileFromWorldPos((int)transform.position.x + x, (int)transform.position.z - (i - Mathf.Abs(x)));
           tilesInRange.Add(tilePlusY);
           if(x != -i && x != i) {
             tilesInRange.Add(tileMinusY);
