@@ -128,18 +128,12 @@ public class MasterManager : MonoBehaviour {
         buildMode.StartBuildMode();
         showObjectInfo = false;
       } else if(newMode == Mode.Assign) {
-        switch(discNum) {
-          case -1:
-            if(activeObject.objectType == WorldDescriptor.objectTypes.Villager) {
-              assignMode.StartVillagerAssignMode(activeObject.gameObject.GetComponent<Villager>());
-            }
-            break;
-          case 0:
-            assignMode.StartTileAssignMode(tm.farmingD);
-            break;
-          case 1:
-            assignMode.StartTileAssignMode(tm.fishingD);
-            break;
+        if(discNum == -1) {
+          if(activeObject.objectType == WorldDescriptor.objectTypes.Villager) {
+            assignMode.StartVillagerAssignMode(activeObject.gameObject.GetComponent<Villager>());
+          }
+        } else {
+          assignMode.StartTileAssignMode(tm.GetDisciplineFromIndex(discNum));
         }
       }
 

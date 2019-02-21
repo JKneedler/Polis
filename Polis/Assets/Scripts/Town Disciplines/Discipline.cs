@@ -21,4 +21,8 @@ public class Discipline {
     return ((assignedTilesCanBuild || tile.GetCanBuild()) && tile.tileTypeEnum == assignableTileType);
   }
 
+  public void InitializeDiscipline() {
+    assignedTiles = new List<Tile>();
+  }
+
 }
