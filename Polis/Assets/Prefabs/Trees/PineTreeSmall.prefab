@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8191542769988946604}
+  - component: {fileID: 2641539970393682709}
+  - component: {fileID: 9170036408928138481}
   m_Layer: 0
   m_Name: PineTreeSmall
   m_TagString: Untagged
@@ -31,6 +33,34 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2641539970393682709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5571269508423185861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e175c49b725a43b8bd71fa705fc7292, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &9170036408928138481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5571269508423185861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0648608f268b14c86b487e6c17551149, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  title: Tree
+  objectType: 2
+  description: just a tree
+  villagerTarget: {fileID: 0}
 --- !u!1 &7136489822369521495
 GameObject:
   m_ObjectHideFlags: 0

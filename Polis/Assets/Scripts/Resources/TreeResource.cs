@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class TreeResource {
+public class TreeResource : MonoBehaviour {
 
   private GameObject treeObj;
 
@@ -13,6 +13,10 @@ public class TreeResource {
 
   public GameObject GetResourceObject() {
     return treeObj;
+  }
+
+  public void DestroyResource() {
+    Destroy(gameObject);
   }
 
 }

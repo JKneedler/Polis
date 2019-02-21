@@ -71,7 +71,7 @@ public class Structure : MonoBehaviour {
 
     public void AssignVillager(Villager vill) {
 	    workers.Add(vill);
-      vill.ChangedAssignment(this, structureJob);
+      vill.ChangedAssignment(structureJob);
     }
 
     public void UnassignVillager(Villager vill) {

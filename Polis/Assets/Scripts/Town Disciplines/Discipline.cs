@@ -11,6 +11,7 @@ public class Discipline {
   public List<Tile> assignedTiles;
   public Tile.TileTypes assignableTileType;
   public bool assignedTilesCanBuild;
+  public Villager.Jobs designatedJob;
 
 
   public virtual Task GetNextTask() {
@@ -23,6 +24,35 @@ public class Discipline {
 
   public void InitializeDiscipline() {
     assignedTiles = new List<Tile>();
+    processes = new List<Process>();
+  }
+
+  public virtual void RemoveAssignedTile(Tile tile) {
+    assignedTiles.Remove(tile);
+  }
+
+  public virtual void AddAssignedTile(Tile tile) {
+    assignedTiles.Add(tile);
+  }
+
+  public virtual void AddWorker(Villager vill) {
+    workers.Add(vill);
+    vill.curJob = designatedJob;
+    AttemptToGetNextTask(vill);
+  }
+
+  public virtual void RemoveWorker(Villager vill) {
+    workers.Remove(vill);
+  }
+
+  public virtual void ReachedTaskTarget(Villager vill) {}
+
+  public virtual void VillagerCompletedTask(Villager vill) {
+    Debug.Log("Completed Task");
+  }
+
+  public virtual void AttemptToGetNextTask(Villager vill) {
+
   }
 
 }

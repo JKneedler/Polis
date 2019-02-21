@@ -62,16 +62,16 @@ public class AssignMode : MonoBehaviour {
         if(wd.gameObject.GetComponent<Structure>()) {
           Structure str = wd.gameObject.GetComponent<Structure>();
       		if(str.CanAssignVillager()) {
-            if(villToAssign.curJob != Villager.Jobs.Citizen) {
-              villToAssign.curStructure.UnassignVillager(villToAssign);
-            }
+            // if(villToAssign.curJob != Villager.Jobs.Citizen) {
+            //   villToAssign.curStructure.UnassignVillager(villToAssign);
+            // }
             str.AssignVillager(villToAssign);
             mm.ChangeCurrentMode(MasterManager.Mode.Run, -1);
           }
         }
       } else if(assignMode == AssignModeTypes.TileToDiscipline) {
         if(discToAssign.assignedTiles.Contains(curHoverTile)) {
-          discToAssign.assignedTiles.Remove(curHoverTile);
+          discToAssign.RemoveAssignedTile(curHoverTile);
           curHoverTile.ChangeMaterial(greenMat);
           if(!discToAssign.assignedTilesCanBuild) {
             curHoverTile.SetCanBuild(true);
@@ -81,7 +81,7 @@ public class AssignMode : MonoBehaviour {
             curHoverTile.SetCanBuild(false);
           }
           curHoverTile.ChangeMaterial(blueMat);
-          discToAssign.assignedTiles.Add(curHoverTile);
+          discToAssign.AddAssignedTile(curHoverTile);
         }
       }
     }

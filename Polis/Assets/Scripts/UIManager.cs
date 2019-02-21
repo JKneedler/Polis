@@ -15,8 +15,8 @@ public class UIManager : MonoBehaviour {
   public GameObject villagerWindow;
   public GameObject buildingWindow;
   public GameObject resourcesWindow;
-  public Text citizenAmtText;
   public Text foresterAmtText;
+  public Text farmerAmtText;
 
     // Start is called before the first frame update
     void Start() {
@@ -75,11 +75,11 @@ public class UIManager : MonoBehaviour {
       }
     }
 
-    public void SetCitizenTextAmt(int amt) {
-      citizenAmtText.text = "" + amt;
-    }
-
     public void SetForesterTextAmt(int amt) {
       foresterAmtText.text = "" + amt;
+    }
+
+    public void SetFarmerTextAmt(int amt) {
+      farmerAmtText.text = "" + amt;
     }
 }

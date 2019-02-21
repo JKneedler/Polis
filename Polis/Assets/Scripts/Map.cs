@@ -173,7 +173,7 @@ public class Map : MonoBehaviour {
         int treeType = Random.Range(0, 2);
         GameObject treeObj = (GameObject)Instantiate(treeModels[treeSize + (3*treeType)], new Vector3(posX, 0.05f, posY), resRot);
         treeObj.transform.parent = resourceParent;
-        TreeResource tree = new TreeResource(treeObj);
+        TreeResource tree = treeObj.GetComponent<TreeResource>();
         tile.AddResource(tree);
       }
     }

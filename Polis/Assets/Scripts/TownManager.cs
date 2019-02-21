@@ -18,7 +18,6 @@ public class TownManager : MonoBehaviour {
   public Farming farmingD;
   public Fishing fishingD;
   public Foresting forestD;
-  public Citizen citizenD;
 
     // Start is called before the first frame update
     void Start() {
@@ -39,8 +38,8 @@ public class TownManager : MonoBehaviour {
       ui.SetFood(foodTotal);
       ui.SetWood(wood.GetAmount());
       ui.SetStone(stone.GetAmount());
-      ui.SetCitizenTextAmt(citizenD.workers.Count);
       ui.SetForesterTextAmt(forestD.workers.Count);
+      ui.SetFarmerTextAmt(farmingD.workers.Count);
     }
 
     void SetFoodTotal() {
@@ -76,10 +75,10 @@ public class TownManager : MonoBehaviour {
     }
 
     public void TryIncreaseDisciplineWorkers(int discNum) {
-      if(citizenD.workers.Count > 0) {
-        Villager vill = citizenD.workers[0];
-        citizenD.workers.RemoveAt(0);
-        GetDisciplineFromIndex(discNum).workers.Add(vill);
+      if(forestD.workers.Count > 0) {
+        Villager vill = forestD.workers[0];
+        forestD.RemoveWorker(vill);
+        GetDisciplineFromIndex(discNum).AddWorker(vill);
         SetUI();
       }
     }
@@ -87,8 +86,8 @@ public class TownManager : MonoBehaviour {
     public void TryDecreaseDisciplineWorkers(int discNum) {
       if(GetDisciplineFromIndex(discNum).workers.Count > 0) {
         Villager vill = GetDisciplineFromIndex(discNum).workers[0];
-        GetDisciplineFromIndex(discNum).workers.RemoveAt(0);
-        citizenD.workers.Add(vill);
+        GetDisciplineFromIndex(discNum).RemoveWorker(vill);
+        forestD.AddWorker(vill);
         SetUI();
       }
 

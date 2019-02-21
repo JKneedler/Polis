@@ -120,6 +120,10 @@ public class Tile {
     numResources = amt;
   }
 
+  public void DecrementNumResources() {
+    numResources--;
+  }
+
   public int GetNumResources() {
     return numResources;
   }
