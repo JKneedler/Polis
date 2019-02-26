@@ -38,6 +38,7 @@ public class TownManager : MonoBehaviour {
       ui.SetFood(foodTotal);
       ui.SetWood(wood.GetAmount());
       ui.SetStone(stone.GetAmount());
+      ui.SetDrachma(drachmaTotal);
       ui.SetForesterTextAmt(forestD.workers.Count);
       ui.SetFarmerTextAmt(farmingD.workers.Count);
     }

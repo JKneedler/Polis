@@ -12,6 +12,8 @@ public class MasterManager : MonoBehaviour {
   public Map map;
   public enum Mode {Run, Build, Assign};
   public Mode curMode = Mode.Run;
+  public enum Tab {None, Tasks, Build, TownInfo};
+  public Tab curTab;
   public int timeMultiplier;
   public GameObject canvas;
   private UIManager ui;
@@ -21,6 +23,10 @@ public class MasterManager : MonoBehaviour {
   private bool showObjectInfo;
   private Tile hoverTile;
   public int mouseLocLayerMask = 1 << 9;
+  public int year;
+  public int weekInYear;
+  public float weekProgress;
+  public float timeScale;
 
     // Start is called before the first frame update
     void Start() {
@@ -34,6 +40,7 @@ public class MasterManager : MonoBehaviour {
     // Update is called once per frame
     void Update() {
       SetMousePosition();
+      AdjustClock();
 
       if(curMode == Mode.Run) {
 
@@ -74,6 +81,19 @@ public class MasterManager : MonoBehaviour {
       }
     }
 
+    void AdjustClock() {
+      weekProgress += (Time.deltaTime * timeScale);
+      if(weekProgress >= 100) {
+        weekProgress = 0;
+        weekInYear++;
+        if(weekInYear == 53) {
+          weekInYear = 1;
+          year++;
+        }
+      }
+      ui.SetClockUI(year, weekInYear, weekProgress);
+    }
+
     void SetMousePosition(){
       Vector2 mouse = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
       Ray ray = Camera.main.ScreenPointToRay(mouse);
@@ -110,6 +130,25 @@ public class MasterManager : MonoBehaviour {
 
     public void PressedNewMode(int modeNum) {
       ChangeCurrentMode((Mode)modeNum, -1);
+    }
+
+    public void ChangeTab(int tabNum) {
+      Tab newTab = (Tab)tabNum;
+      ui.HideAllTabWindows();
+      if(newTab != curTab) {
+        if(newTab == Tab.Tasks) {
+          ui.DisplayTasksWindow();
+        } else if(newTab == Tab.TownInfo) {
+          ui.DisplayJobsWindow();
+          ui.DisplayResourcesWindow();
+        } else if(newTab == Tab.Build) {
+          ui.HideAllTabWindows();
+          ChangeCurrentMode(Mode.Build, -1);
+        }
+        curTab = newTab;
+      } else {
+        curTab = Tab.None;
+      }
     }
 
     public void StartAssigningForDiscipline(int discNum) {
