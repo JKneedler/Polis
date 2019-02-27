@@ -21,8 +21,8 @@ public class UIManager : MonoBehaviour {
   public GameObject tasksWindow;
   public Text foresterAmtText;
   public Text farmerAmtText;
-  public Text yearText;
-  public Text weekText;
+  public TextMeshProUGUI yearText;
+  public TextMeshProUGUI weekText;
   public Slider weekProgressSlider;
 
     // Start is called before the first frame update
