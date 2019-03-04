@@ -49,10 +49,27 @@ public class Discipline {
 
   public virtual void VillagerCompletedTask(Villager vill) {
     Debug.Log("Completed Task");
+    for(int i = 0; i < processes.Count; i++) {
+      processes[i].villagersWorking.Remove(vill);
+    }
+    vill.hasTask = false;
+    vill.curTask = null;
+    vill.target = null;
+    AttemptToGetNextTask(vill);
   }
 
   public virtual void AttemptToGetNextTask(Villager vill) {
-
+    while(processes.Count > 0 && processes[0].villagersWorking.Count == 0 && processes[0].tasks.Count == 0) {
+      processes.RemoveAt(0);
+    }
+    for(int i = 0; i < processes.Count; i++) {
+      if(processes[i].tasks.Count > 0) {
+        Task newTask = processes[i].tasks.Dequeue();
+        processes[i].villagersWorking.Add(vill);
+        vill.NewTask(newTask);
+        i = processes.Count;
+      }
+    }
   }
 
 }

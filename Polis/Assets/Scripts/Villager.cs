@@ -8,7 +8,7 @@ public class Villager : MonoBehaviour {
   public enum Jobs {Farmer, Fisher, Forester}
   public Jobs curJob;
   public string villagerName;
-
+  public Process processOn;
   public Task curTask;
   public bool hasTask;
   public bool returningFromTask;
@@ -44,6 +44,7 @@ public class Villager : MonoBehaviour {
           } else {
             if(curTask.GetContactDisciplineWhenReached()) disc.ReachedTaskTarget(this);
             target = curTask.GetReturnTargetWD().villagerTarget;
+            Debug.Log(curTask.GetReturnTargetWD().villagerTarget);
             atTarget = false;
             returningFromTask = true;
           }

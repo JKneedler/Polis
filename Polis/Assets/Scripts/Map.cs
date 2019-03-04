@@ -138,17 +138,22 @@ public class Map : MonoBehaviour {
               if(flowerPercent < flowerCutoff) tileNum = 1;
               tileObj = (GameObject)Instantiate(grassTiles[tileNum], tilePos, tileRot);
               tileObj.transform.parent = transform;
+              WorldDescriptor wd = tileObj.AddComponent<WorldDescriptor>();
               tile.SetTileObject(tileObj);
+              wd.SetTile(tile);
               if(tileType == 'F') GenerateResourcesOnTile(tile);
             } else {
               tileObj = (GameObject)Instantiate(edgeTiles[tileAutoID], tilePos, edgeTiles[tileAutoID].transform.rotation);
               tileObj.transform.parent = transform;
+              WorldDescriptor wd = tileObj.AddComponent<WorldDescriptor>();
               tile.SetTileObject(tileObj);
-            }
+              wd.SetTile(tile);            }
           } else if(tileType == 'W') {
             tileObj = (GameObject)Instantiate(clearTile, tilePos, clearTile.transform.rotation);
             tileObj.transform.parent = transform;
+            WorldDescriptor wd = tileObj.AddComponent<WorldDescriptor>();
             tile.SetTileObject(tileObj);
+            wd.SetTile(tile);
             tileObj.SetActive(false);
           }
         }

@@ -32,7 +32,7 @@ public class Foresting : Discipline {
       Task chopTree = new Task(treeObj.GetComponent<WorldDescriptor>(), tempWD, 5f, false, true);
       taskQ.Enqueue(chopTree);
     }
-    Process newTileProcess = new Process(taskQ);
+    Process newTileProcess = new Process(taskQ, false);
     newTileProcess.tileOn = tile;
     processes.Add(newTileProcess);
     for(int i = 0; i < workers.Count; i++) {
