@@ -5,8 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public class Foresting : Discipline {
 
-  public WorldDescriptor tempWD;
-
   public override void RemoveAssignedTile(Tile tile) {
     assignedTiles.Remove(tile);
     for(int i = 0; i < processes.Count; i++) {
@@ -23,13 +21,14 @@ public class Foresting : Discipline {
   }
 
   public override void AddAssignedTile(Tile tile) {
+    ForestTile fTile = tile as ForestTile;
     assignedTiles.Add(tile);
     //Create new tasks
     Queue<Task> taskQ = new Queue<Task>();
-    List<TreeResource> trees = tile.GetResourcesList();
+    List<TreeResource> trees = fTile.GetResourcesList();
     foreach (TreeResource tree in trees) {
       GameObject treeObj = tree.gameObject;
-      Task chopTree = new Task(treeObj.GetComponent<WorldDescriptor>(), tempWD, 5f, false, true);
+      Task chopTree = new Task(tile, tile, 5f, false, true);
       taskQ.Enqueue(chopTree);
     }
     Process newTileProcess = new Process(taskQ, false);
@@ -53,21 +52,20 @@ public class Foresting : Discipline {
   }
 
   public override void ReachedTaskTarget(Villager vill) {
-    for(int i = 0; i < processes.Count; i++) {
-      if(processes[i].villagersWorking.Contains(vill)) {
-        Tile tile = processes[i].tileOn;
-        TreeResource tr = vill.curTask.GetTargetWD().gameObject.GetComponent<TreeResource>();
-        tile.RemoveResource(tr);
-        tr.DestroyResource();
-        tile.DecrementNumResources();
-        if(tile.GetNumResources() == 0) {
-          tile.SetTypeChar('G');
-          tile.SetCanBuild(true);
-          tile.SetMaterialBackToOriginal();
-          assignedTiles.Remove(tile);
-        }
-      }
-    }
+    // for(int i = 0; i < processes.Count; i++) {
+    //   if(processes[i].villagersWorking.Contains(vill)) {
+    //     ForestTile tile = processes[i].tileOn as ForestTile;
+    //     TreeResource tr = vill.curTask.GetTargetWD().gameObject.GetComponent<TreeResource>();
+    //     tile.RemoveResource(tr);
+    //     tr.DestroyResource();
+    //     if(tile.GetNumResources() == 0) {
+    //       // tile.SetTypeChar('G'); ------- Change the tile to grass
+    //       // tile.SetCanBuild(true);
+    //       tile.SetMaterialBackToOriginal();
+    //       assignedTiles.Remove(tile);
+    //     }
+    //   }
+    // }
   }
 
   public override void VillagerCompletedTask(Villager vill) {

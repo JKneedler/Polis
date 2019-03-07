@@ -4,8 +4,8 @@ using UnityEngine;
 
 [System.Serializable]
 public class Task {
-  private WorldDescriptor target;
-  private WorldDescriptor returnTarget;
+  private Tile target;
+  private Tile returnTarget;
   private float taskDuration;
   public bool repeat;
   public bool contactDisciplineWhenReached;
@@ -13,7 +13,7 @@ public class Task {
 
   public Task() {}
 
-  public Task(WorldDescriptor target, WorldDescriptor returnTarget, float taskDuration, bool repeat, bool contactDisciplineWhenReached) {
+  public Task(Tile target, Tile returnTarget, float taskDuration, bool repeat, bool contactDisciplineWhenReached) {
     this.target = target;
     this.returnTarget = returnTarget;
     this.taskDuration = taskDuration;
@@ -21,11 +21,11 @@ public class Task {
     this.contactDisciplineWhenReached = contactDisciplineWhenReached;
   }
 
-  public WorldDescriptor GetTargetWD() {
+  public Tile GetTargetWD() {
     return target;
   }
 
-  public WorldDescriptor GetReturnTargetWD() {
+  public Tile GetReturnTargetWD() {
     return returnTarget;
   }
 

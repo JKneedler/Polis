@@ -7,31 +7,36 @@ using UnityEngine.EventSystems;
 public class BuildMode : MonoBehaviour {
 
   GameObject buildPlaceholder;
+  public GameObject tileSelectorPrefab;
+  List<GameObject> tileSelectors = new List<GameObject>();
   List<Tile> buildingTiles = new List<Tile>();
-  public GameObject[] structures;
-  public int structureIndex;
-  public float scale;
+  public BuildableTile tileToBuild;
+  private int curRotAmt;
+  private Vector2 curBuildRotScale;
+  private Tile curHoverTile;
+  public Material redMat;
+  Material originalMat;
+
+  // References
   public Map mapScript;
   MasterManager mm;
   TownManager tm;
   UIManager ui;
   public GameObject canvas;
-  public bool build;
-  public int curRotAmt;
-  public Vector2 curBuildRotScale;
-  public Tile hoverTile;
-  public Material greenMat;
-  public Material redMat;
 
-  public GameObject buildMenuObject;
-  public GameObject buildMenuButton;
+  // Temporary
+  public Button buildTest;
+  BuildableTile testBuild;
+  public Vector2 testScale;
 
     // Start is called before the first frame update
     void Start() {
       ui = canvas.GetComponent<UIManager>();
-        mm = gameObject.GetComponent<MasterManager>();
-        tm = gameObject.GetComponent<TownManager>();
-        GenerateBuildMenuOptions();
+      mm = gameObject.GetComponent<MasterManager>();
+      tm = gameObject.GetComponent<TownManager>();
+      originalMat = tileSelectorPrefab.transform.GetChild(0).gameObject.GetComponent<Renderer>().sharedMaterial;
+      testBuild = new BuildableTile(testScale);
+      buildTest.onClick.AddListener(() => mm.StartBuildModeForTile(testBuild));
     }
 
     // Update is called once per frame
@@ -39,77 +44,54 @@ public class BuildMode : MonoBehaviour {
 
     }
 
-    public void StartBuildMode() {
-      build = true;
-      buildMenuObject.SetActive(true);
-      SetCurBuildRotation(0);
+    public void StartBuildMode(BuildableTile buildTile) {
+      tileToBuild = buildTile;
+      curRotAmt = 2;
+      SetCurBuildRotation(2);
     }
 
     public void EndBuildMode() {
-      build = false;
-      buildMenuObject.SetActive(false);
-      if(buildPlaceholder){
-        for(int i = 0; i < buildingTiles.Count; i++) {
-          buildingTiles[i].SetMaterialBackToOriginal();
-        }
-        Destroy(buildPlaceholder);
-        buildPlaceholder = null;
-        buildingTiles.Clear();
+      for(int i = 0; i < tileSelectors.Count; i++) {
+        Destroy(tileSelectors[i]);
       }
+      tileToBuild = null;
+      buildingTiles.Clear();
+      tileSelectors.Clear();
     }
 
-    public void Build(Vector3 mousePos, Tile newTile) {
-      Structure str = structures[structureIndex].GetComponent<Structure>();
-      if(newTile != null) {
-        Vector2 tileWorldLoc = newTile.GetWorldLoc();
-        Vector3 newBuildPos = GetNewBuildPos((int)tileWorldLoc.x, (int)tileWorldLoc.y);
-        if(buildPlaceholder){
-          List<Tile> possibleHoverTiles = GetHoverTiles(newTile);
-          if(newTile != hoverTile && !possibleHoverTiles.Contains(null)) {
-            hoverTile = newTile;
-            buildPlaceholder.transform.position = newBuildPos;
-            ChangeBuildTiles(possibleHoverTiles);
-          }
-
-          // Rotate the Object
-          if(Input.GetButtonDown("R") && !possibleHoverTiles.Contains(null)) {
-            buildPlaceholder.transform.Rotate(Vector3.up * 90);
-            if(curRotAmt < 3) {
-              curRotAmt++;
-            } else {
-              curRotAmt = 0;
+    public void Build(Tile newHoverTile) {
+      if(newHoverTile != null && newHoverTile != curHoverTile) {
+        List<Tile> possibleBuildTiles = GetHoverTiles(newHoverTile);
+        if(!possibleBuildTiles.Contains(null)) {
+          if(tileSelectors.Count > 0){
+            curHoverTile = newHoverTile;
+            buildingTiles = possibleBuildTiles;
+            MoveSelectors();
+          } else {
+            for(int i = 0; i < possibleBuildTiles.Count; i++) {
+              Vector3 spawnLoc = possibleBuildTiles[i].GetTileObj().transform.position;
+              GameObject tileSel = (GameObject)Instantiate(tileSelectorPrefab, spawnLoc, Quaternion.identity);
+              tileSelectors.Add(tileSel);
             }
-            SetCurBuildRotation(curRotAmt);
-            newBuildPos = GetNewBuildPos((int)tileWorldLoc.x, (int)tileWorldLoc.y);
-            buildPlaceholder.transform.position = newBuildPos;
-            possibleHoverTiles = GetHoverTiles(newTile);
-            ChangeBuildTiles(possibleHoverTiles);
           }
-
-        } else {
-          buildPlaceholder = (GameObject)Instantiate(structures[structureIndex], newBuildPos, Quaternion.identity);
-          buildPlaceholder.transform.Rotate(Vector3.up * 90 * curRotAmt);
-          buildPlaceholder.GetComponent<BoxCollider>().enabled = false;
         }
       }
-    }
 
-    public Vector3 GetNewBuildPos(int x, int y) {
-      int newX = x;
-      int newY = y;
-      switch(curRotAmt) {
-        case 1:
-          newY += 1;
-          break;
-        case 2:
-          newX += 1;
-          newY += 1;
-          break;
-        case 3:
-          newX += 1;
-          break;
+      // Rotate the Object
+      if(Input.GetButtonDown("R")) {
+        if(curRotAmt < 3) {
+          curRotAmt++;
+        } else {
+          curRotAmt = 0;
+        }
+        SetCurBuildRotation(curRotAmt);
+        List<Tile> possibleBuildTiles = GetHoverTiles(newHoverTile);
+        if(!possibleBuildTiles.Contains(null)) {
+          buildingTiles = possibleBuildTiles;
+          MoveSelectors();
+        }
       }
-      return new Vector3(newX, 0, newY);
+
     }
 
     public void AttemptToBuild() {
@@ -120,56 +102,51 @@ public class BuildMode : MonoBehaviour {
         }
       }
       if(canBuild){
-        Structure str = buildPlaceholder.GetComponent<Structure>();
-        str.Place(buildingTiles);
-        buildPlaceholder.GetComponent<BoxCollider>().enabled = true;
-        buildPlaceholder = null;
+        // Destroy previous tileObj
+        // Change the corresponding tile to the tileToBuild
+        // Instantiate new tileObj
 
-        //Change tile Color
-        for(int i = 0; i < buildingTiles.Count; i++){
-          buildingTiles[i].ChangeMaterial(redMat);
-          buildingTiles[i].SetCanBuild(false);
+
+        // Change tile selectors Color
+        for(int i = 0; i < tileSelectors.Count; i++){
+          // Change color to red
         }
-
-        tm.BuiltStructure(str);
       }
     }
 
-    void ChangeBuildTiles(List<Tile> newTiles) {
-      for(int i = 0; i < buildingTiles.Count; i++) {
-        if(!newTiles.Contains(buildingTiles[i])) {
-          buildingTiles[i].SetMaterialBackToOriginal();
-        }
-      }
-      for(int i = 0; i < newTiles.Count; i++) {
-        if(newTiles[i].GetCanBuild()) {
-          newTiles[i].ChangeMaterial(greenMat);
+    void MoveSelectors() {
+      for(int i = 0; i < tileSelectors.Count; i++) {
+        tileSelectors[i].transform.position = buildingTiles[i].GetTileObj().transform.position;
+        MeshRenderer selMat = tileSelectors[i].transform.GetChild(0).gameObject.GetComponent<MeshRenderer>();
+        if(buildingTiles[i].GetCanBuild()) {
+          selMat.material = originalMat;
+          Debug.Log("Can Build");
         } else {
-          newTiles[i].ChangeMaterial(redMat);
+          selMat.material = redMat;
+          Debug.Log("Can't Build");
         }
       }
-      buildingTiles = newTiles;
     }
 
     void SetCurBuildRotation(int rotAmt) {
-      Structure str = structures[structureIndex].GetComponent<Structure>();
+      Vector2 tileScale = tileToBuild.GetScale();
       Vector2 newBuildRotScale = new Vector2();
       switch(rotAmt) {
         case 0:
-          newBuildRotScale.x = str.objScale.x;
-          newBuildRotScale.y = str.objScale.y;
+          newBuildRotScale.x = tileScale.x;
+          newBuildRotScale.y = tileScale.y;
           break;
         case 1:
-          newBuildRotScale.x = str.objScale.y;
-          newBuildRotScale.y = -str.objScale.x;
+          newBuildRotScale.x = tileScale.y;
+          newBuildRotScale.y = -tileScale.x;
           break;
         case 2:
-          newBuildRotScale.x = -str.objScale.x;
-          newBuildRotScale.y = -str.objScale.y;
+          newBuildRotScale.x = -tileScale.x;
+          newBuildRotScale.y = -tileScale.y;
           break;
         case 3:
-          newBuildRotScale.x = -str.objScale.y;
-          newBuildRotScale.y = str.objScale.x;
+          newBuildRotScale.x = -tileScale.y;
+          newBuildRotScale.y = tileScale.x;
           break;
       }
       curBuildRotScale = newBuildRotScale;
@@ -177,7 +154,8 @@ public class BuildMode : MonoBehaviour {
 
     List<Tile> GetHoverTiles(Tile hoverT) {
       List<Tile> newTiles = new List<Tile>();
-      Vector2 originalTileLoc = hoverT.GetWorldLoc();
+      Vector3 originalTileLoc3 = hoverT.GetWorldLoc();
+      Vector2 originalTileLoc = new Vector2(originalTileLoc3.x, originalTileLoc3.z);
       for(int x = 0; x < Mathf.Abs(curBuildRotScale.x); x++) {
         for(int y = 0; y < Mathf.Abs(curBuildRotScale.y); y++) {
           int indexX = x;
@@ -193,34 +171,7 @@ public class BuildMode : MonoBehaviour {
       return newTiles;
     }
 
-    void GenerateBuildMenuOptions() {
-      float yOffset = 60;
-      for(int i = 0; i < structures.Length; i++) {
-        Vector3 newLoc = new Vector3(0, 170 - (yOffset * i), 0);
-        GameObject newButtonObject = (GameObject)Instantiate(buildMenuButton, newLoc, buildMenuButton.transform.rotation, buildMenuObject.transform.GetChild(0));
-        newButtonObject.transform.localPosition = newLoc;
-        Button newButt = newButtonObject.GetComponent<Button>();
-        newButtonObject.transform.GetChild(0).GetComponent<Text>().text = structures[i].gameObject.GetComponent<WorldDescriptor>().title;
-        int index = i;
-        newButt.onClick.AddListener(() => ChangeBuildingToBuild(index));
-      }
-    }
-
-    public void ChangeBuildingToBuild(int i) {
-      EndBuildMode();
-      structureIndex = i;
-      StartBuildMode();
-    }
-
     public void DestroyBuilding() {
-      GameObject building = mm.activeObject.gameObject;
-      Structure str = building.GetComponent<Structure>();
-      for(int i = 0; i < str.tilesOn.Count; i++) {
-        str.tilesOn[i].SetCanBuild(true);
-      }
-      tm.DestroyedStructure(str);
-      Destroy(building);
-      mm.activeObject = null;
-      ui.HideAllActiveObjectWindows();
+      // Change to grass tile
     }
 }

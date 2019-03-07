@@ -17,8 +17,7 @@ public class Structure : MonoBehaviour {
 
   public enum BuildingTypes {Foresting, Mining, Farming, Livestock, Fishing};
   public BuildingTypes buildingType;
-  public ForesterData foresterData;
-  public FarmData farmData;
+
 
   //Add location for the structure to villagers know where to stay around
 
@@ -43,7 +42,6 @@ public class Structure : MonoBehaviour {
         case BuildingTypes.Mining:
           break;
         case BuildingTypes.Farming:
-          farmData.farmingTiles = new List<Tile>();
           break;
         case BuildingTypes.Livestock:
           break;

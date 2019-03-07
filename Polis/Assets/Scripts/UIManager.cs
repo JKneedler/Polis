@@ -55,12 +55,6 @@ public class UIManager : MonoBehaviour {
       drachmaText.text = "" + total;
     }
 
-    public void DisplayInfoPanel(WorldDescriptor info) {
-      infoWindow.SetActive(true);
-      infoWindowTitle.text = info.title;
-      infoWindowDescription.text = info.description;
-    }
-
     public void HideInfoPanel() {
       infoWindow.SetActive(false);
     }

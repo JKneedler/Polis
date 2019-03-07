@@ -34,7 +34,7 @@ public class Villager : MonoBehaviour {
       if(target && hasTask) {
         if(!atTarget) {
           atTarget = (Vector3.Distance(target.position, transform.position) <= minDist);
-          transform.position = Vector3.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime * mm.timeMultiplier);
+          transform.position = Vector3.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
         } else if(atTarget && taskTimer > 0 && !returningFromTask){
           taskTimer -= Time.deltaTime;
         } else if(atTarget && taskTimer < 0) {
@@ -43,8 +43,7 @@ public class Villager : MonoBehaviour {
             disc.VillagerCompletedTask(this);
           } else {
             if(curTask.GetContactDisciplineWhenReached()) disc.ReachedTaskTarget(this);
-            target = curTask.GetReturnTargetWD().villagerTarget;
-            Debug.Log(curTask.GetReturnTargetWD().villagerTarget);
+            // target = curTask.GetReturnTargetWD().villagerTarget;
             atTarget = false;
             returningFromTask = true;
           }
@@ -62,7 +61,7 @@ public class Villager : MonoBehaviour {
       returningFromTask = false;
       atTarget = false;
       hasTask = true;
-      target = curTask.GetTargetWD().villagerTarget;
+      // target = curTask.GetTargetWD().villagerTarget;
       taskTimer = curTask.GetTaskDuration();
       Debug.Log("Got new Task");
     }

@@ -9,7 +9,7 @@ public class Discipline {
   public List<Structure> structures;
   public List<Process> processes;
   public List<Tile> assignedTiles;
-  public Tile.TileTypes assignableTileType;
+  public char assignableTileType;
   public bool assignedTilesCanBuild;
   public Villager.Jobs designatedJob;
 
@@ -19,7 +19,7 @@ public class Discipline {
   }
 
   public virtual bool CanAssignTile(Tile tile) {
-    return ((assignedTilesCanBuild || tile.GetCanBuild()) && tile.tileTypeEnum == assignableTileType);
+    return ((assignedTilesCanBuild || tile.GetCanBuild()) && tile.GetTypeChar() == assignableTileType);
   }
 
   public void InitializeDiscipline() {

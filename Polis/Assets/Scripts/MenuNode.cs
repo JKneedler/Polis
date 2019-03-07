@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class FarmData {
+public class MenuNode {
 
-  public int maxFarmingTiles;
-  public List<Tile> farmingTiles;
+  public int level;
+  public int parent;
+  public string name;
+
 }

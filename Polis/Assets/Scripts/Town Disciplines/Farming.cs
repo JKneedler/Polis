@@ -7,7 +7,6 @@ public class Farming : Discipline {
 
   public int maxFarmingTiles;
   public GameObject[] farmTilePrefabs;
-  public WorldDescriptor tempWD;
 
   public override void RemoveAssignedTile(Tile tile) {
     assignedTiles.Remove(tile);
@@ -19,10 +18,9 @@ public class Farming : Discipline {
     }
 
     Queue<Task> taskQ = new Queue<Task>();
-    WorldDescriptor tileWD = tile.GetTileObject().GetComponent<WorldDescriptor>();
-    Task taskTill = new Task(tileWD, tempWD, 5f, false, true);
-    Task taskWater = new Task(tileWD, tempWD, 5f, true, true);
-    Task taskHarvest = new Task(tileWD, tempWD, 5f, false, true);
+    Task taskTill = new Task(tile, tile, 5f, false, true);
+    Task taskWater = new Task(tile, tile, 5f, true, true);
+    Task taskHarvest = new Task(tile, tile, 5f, false, true);
     taskQ.Enqueue(taskTill);
     taskQ.Enqueue(taskWater);
     taskQ.Enqueue(taskHarvest);
