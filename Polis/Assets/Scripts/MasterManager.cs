@@ -24,8 +24,6 @@ public class MasterManager : MonoBehaviour {
   public float weekProgress;
   public float timeScale;
 
-  public MenuNode[] menuTree;
-
     // Start is called before the first frame update
     void Start() {
       ui = canvas.GetComponent<UIManager>();
@@ -41,6 +39,15 @@ public class MasterManager : MonoBehaviour {
 
       if(curMode == Mode.Run) {
         if(Input.GetButtonDown("Fire1") && !EventSystem.current.IsPointerOverGameObject()) {
+          Debug.Log(mouseOverTile.GetTileType());
+          Tile.TileTypes tType = mouseOverTile.GetTileType();
+          if(tType == Tile.TileTypes.Building) {
+            ui.SetBuildingSelector(mouseOverTile as BuildableTile);
+          } else if(tType == Tile.TileTypes.BuildingChild) {
+            ui.SetBuildingSelector(((BuildableTileChild)mouseOverTile).GetParent());
+          } else {
+            ui.HideBuildingSelector();
+          }
         }
       } else if(curMode == Mode.Build) {
         buildMode.Build(mouseOverTile);
@@ -49,9 +56,10 @@ public class MasterManager : MonoBehaviour {
         }
       }
 
-      if(Input.GetKey(KeyCode.Escape)) {
+      if(Input.GetKeyDown(KeyCode.Escape)) {
         StartRunMode();
-        ui.HideAllActiveObjectWindows();
+        ui.HideBuildMenu();
+        ui.HideBuildingSelector();
       }
     }
 
@@ -105,23 +113,4 @@ public class MasterManager : MonoBehaviour {
         curMode = Mode.Build;
       }
     }
-
-    // public void ChangeTab(int tabNum) {
-    //   Tab newTab = (Tab)tabNum;
-    //   ui.HideAllTabWindows();
-    //   if(newTab != curTab) {
-    //     if(newTab == Tab.Tasks) {
-    //       ui.DisplayTasksWindow();
-    //     } else if(newTab == Tab.TownInfo) {
-    //       ui.DisplayJobsWindow();
-    //       ui.DisplayResourcesWindow();
-    //     } else if(newTab == Tab.Build) {
-    //       ui.HideAllTabWindows();
-    //       ChangeCurrentMode(Mode.Build, -1);
-    //     }
-    //     curTab = newTab;
-    //   } else {
-    //     curTab = Tab.None;
-    //   }
-    // }
 }

@@ -10,7 +10,7 @@ public class Tile {
   protected char type;
   protected GameObject tileObj;
 
-  public enum TileTypes{Grass, Forest, Coast, Ocean, Building};
+  public enum TileTypes{Grass, Forest, Coast, Ocean, Building, BuildingChild};
   protected TileTypes tileType;
 
   public Tile(Vector2 mapLoc, Vector3 worldLoc, char type, GameObject tileObj) {
@@ -18,6 +18,7 @@ public class Tile {
     this.worldLoc = worldLoc;
     this.type = type;
     this.tileObj = tileObj;
+    SetTileType(type);
   }
 
   public Tile() {}
@@ -26,6 +27,10 @@ public class Tile {
 
   public char GetTypeChar() {
     return type;
+  }
+
+  public TileTypes GetTileType() {
+    return tileType;
   }
 
   public Vector2 GetMapLoc() {
@@ -48,8 +53,18 @@ public class Tile {
     return autotileID;
   }
 
-  public virtual bool GetCanBuild() {
-    return true;
+  public virtual bool GetCanBuild(TileTypes buildOnType) {
+    return (buildOnType == tileType);
+  }
+
+  public void DestroyTileObject() {
+    GameObject.Destroy(tileObj);
+  }
+
+  public virtual void ReachedTargetLocation(Tile targetTile, TreeResource targetTree) {
+  }
+
+  public virtual void FinishedTargetLocation(Tile targetTile, TreeResource targetTree) {
   }
 
 }

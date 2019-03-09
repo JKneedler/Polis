@@ -4,41 +4,99 @@ using UnityEngine;
 
 [System.Serializable]
 public class Task {
-  private Tile target;
-  private Tile returnTarget;
-  private float taskDuration;
-  public bool repeat;
-  public bool contactDisciplineWhenReached;
-  // private Animation taskAnimation; -- Add when I have animations added in
+
+  protected Queue<Target> targets;
+  protected bool isNecessary;
 
   public Task() {}
 
-  public Task(Tile target, Tile returnTarget, float taskDuration, bool repeat, bool contactDisciplineWhenReached) {
-    this.target = target;
-    this.returnTarget = returnTarget;
-    this.taskDuration = taskDuration;
-    this.repeat = repeat;
-    this.contactDisciplineWhenReached = contactDisciplineWhenReached;
+  public Task(Queue<Target> targets, bool isNecessary) {
+    this.targets = targets;
+    this.isNecessary = isNecessary;
   }
 
-  public Tile GetTargetWD() {
-    return target;
+  public Target GetNextTarget() {
+    if(targets.Count > 0) {
+      return targets.Dequeue();
+    } else {
+      return null;
+    }
   }
 
-  public Tile GetReturnTargetWD() {
-    return returnTarget;
+  public bool GetIsNecessary() {
+    return isNecessary;
   }
 
-  public float GetTaskDuration() {
-    return taskDuration;
+}
+
+[System.Serializable]
+public class Target {
+
+  public Vector3 location;
+  public Tile targetTile;
+  public TreeResource targetTree;
+  public Animation anim;
+  public float duration;
+  public bool callWhenReach;
+  public bool callWhenDone;
+  public float dist;
+
+  public Target(Vector3 location, Animation anim, float duration, bool callWhenReach, bool callWhenDone) {
+    this.location = location;
+    this.targetTile = null;
+    this.targetTree = null;
+    this.anim = anim;
+    this.duration = duration;
+    this.callWhenReach = callWhenReach;
+    this.callWhenDone = callWhenDone;
+    this.dist = 0.5f;
   }
 
-  public bool GetRepeat() {
-    return repeat;
+  public Target(Vector3 location, Tile targetTile, Animation anim, float duration, bool callWhenReach, bool callWhenDone) {
+    this.location = location;
+    this.targetTile = targetTile;
+    this.targetTree = null;
+    this.anim = anim;
+    this.duration = duration;
+    this.callWhenReach = callWhenReach;
+    this.callWhenDone = callWhenDone;
+    this.dist = 0.5f;
   }
 
-  public bool GetContactDisciplineWhenReached() {
-    return contactDisciplineWhenReached;
+  public Target(Vector3 location, TreeResource targetTree, Animation anim, float duration, bool callWhenReach, bool callWhenDone) {
+    this.location = location;
+    this.targetTile = null;
+    this.targetTree = targetTree;
+    this.anim = anim;
+    this.duration = duration;
+    this.callWhenReach = callWhenReach;
+    this.callWhenDone = callWhenDone;
+    this.dist = 0.5f;
   }
 
+  public Target(Vector3 location, Tile targetTile, TreeResource targetTree, Animation anim, float duration, bool callWhenReach, bool callWhenDone) {
+    this.location = location;
+    this.targetTile = targetTile;
+    this.targetTree = targetTree;
+    this.anim = anim;
+    this.duration = duration;
+    this.callWhenReach = callWhenReach;
+    this.callWhenDone = callWhenDone;
+    this.dist = 0.5f;
+  }
+
+  public Target(Vector3 location, bool callWhenDone) {
+    this.location = location;
+    this.targetTile = null;
+    this.targetTree = null;
+    this.anim = null;
+    this.duration = 0f;
+    this.callWhenReach = false;
+    this.callWhenDone = callWhenDone;
+    this.dist = 0.5f;
+  }
+
+  public void SetDistance(float dist) {
+    this.dist = dist;
+  }
 }

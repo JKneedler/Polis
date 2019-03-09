@@ -11,10 +11,6 @@ public class OceanTile : Tile {
 
   }
 
-  public override bool GetCanBuild() {
-    return false;
-  }
-
   public override void SetTileType(char typeChar) {
     tileType = TileTypes.Ocean;
   }

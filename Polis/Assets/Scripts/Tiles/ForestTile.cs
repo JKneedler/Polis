@@ -11,10 +11,6 @@ public class ForestTile : Tile {
     this.trees = trees;
   }
 
-  public override bool GetCanBuild() {
-    return false;
-  }
-
   public override void SetTileType(char typeChar) {
     tileType = TileTypes.Forest;
   }
@@ -23,20 +19,8 @@ public class ForestTile : Tile {
     trees.Add(res);
   }
 
-  public void RemoveResource(TreeResource res) {
-    trees.Remove(res);
-  }
-
   public List<TreeResource> GetResourcesList() {
     return trees;
-  }
-
-  public TreeResource GetRandomTree() {
-    return trees[Random.Range(0, trees.Count)];
-  }
-
-  public int GetNumResources() {
-    return trees.Count;
   }
 
 }

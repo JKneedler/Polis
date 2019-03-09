@@ -10,21 +10,21 @@ public class TownManager : MonoBehaviour {
   public int drachmaTotal;
   private UIManager ui;
   public GameObject canvas;
-  public List<Villager> villagers;
-  public List<Structure> structures;
+  public JobWorkers[] villagers;
+  public List<Task> citizenTasks;
+  public List<BuildableTile> builtTiles;
   public List<Resource> resources;
   public Resource wood;
   public Resource stone;
-  public Farming farmingD;
-  public Fishing fishingD;
-  public Foresting forestD;
+
+  [System.Serializable]
+  public class JobWorkers {
+    public List<Villager> workers;
+  }
 
     // Start is called before the first frame update
     void Start() {
       ui = canvas.GetComponent<UIManager>();
-      farmingD.InitializeDiscipline();
-      fishingD.InitializeDiscipline();
-      forestD.InitializeDiscipline();
       SetUI();
     }
 
@@ -34,13 +34,12 @@ public class TownManager : MonoBehaviour {
     }
 
     void SetUI() {
-      ui.SetPopulation(villagers.Count);
+      // ui.SetPopulation(villagers[0].Count);
       ui.SetFood(foodTotal);
       ui.SetWood(wood.GetAmount());
       ui.SetStone(stone.GetAmount());
       ui.SetDrachma(drachmaTotal);
-      ui.SetForesterTextAmt(forestD.workers.Count);
-      ui.SetFarmerTextAmt(farmingD.workers.Count);
+
     }
 
     void SetFoodTotal() {
@@ -54,44 +53,42 @@ public class TownManager : MonoBehaviour {
       SetUI();
     }
 
-    public void BuiltStructure(Structure str) {
-      structures.Add(str);
+    public void BuiltTile(BuildableTile bTile) {
+      builtTiles.Add(bTile);
     }
 
-    public void DestroyedStructure(Structure str) {
-      structures.Remove(str);
+    public void DestroyedTile(BuildableTile bTile) {
+      builtTiles.Remove(bTile);
     }
 
-    public Discipline GetDisciplineFromIndex(int discNum) {
-      switch(discNum) {
-        case 0:
-          return farmingD;
-        case 1:
-          return fishingD;
-        case 2:
-          return forestD;
-        default:
-          return farmingD;
+    public Task RequestNextTask() {
+      if(citizenTasks.Count > 0) {
+         Task t = citizenTasks[0];
+         citizenTasks.RemoveAt(0);
+         return t;
+      } else {
+        return GetRandomTask();
       }
     }
 
-    public void TryIncreaseDisciplineWorkers(int discNum) {
-      if(forestD.workers.Count > 0) {
-        Villager vill = forestD.workers[0];
-        forestD.RemoveWorker(vill);
-        GetDisciplineFromIndex(discNum).AddWorker(vill);
-        SetUI();
-      }
+    public Task GetRandomTask() {
+      Queue<Target> taskQ = new Queue<Target>();
+      taskQ.Enqueue(new Target(new Vector3(2, 0, 1), false));
+      taskQ.Enqueue(new Target(new Vector3(-2, 0, -1), false));
+      return new Task(taskQ, false);
     }
 
-    public void TryDecreaseDisciplineWorkers(int discNum) {
-      if(GetDisciplineFromIndex(discNum).workers.Count > 0) {
-        Villager vill = GetDisciplineFromIndex(discNum).workers[0];
-        GetDisciplineFromIndex(discNum).RemoveWorker(vill);
-        forestD.AddWorker(vill);
-        SetUI();
+    public void AddTask(Task newTask) {
+      bool given = false;
+      List<Villager> citizens = villagers[(int)Villager.Jobs.Citizen].workers;
+      for(int i = 0; i < citizens.Count; i++) {
+        if(!citizens[i].curTask.GetIsNecessary()) {
+          citizens[i].SwitchTask(newTask);
+          i = citizens.Count;
+          given = true;
+        }
       }
-
+      if(!given) citizenTasks.Add(newTask);
     }
 
 }

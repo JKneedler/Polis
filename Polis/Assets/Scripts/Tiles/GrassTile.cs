@@ -9,10 +9,6 @@ public class GrassTile : Tile {
 
   }
 
-  public override bool GetCanBuild() {
-    return true;
-  }
-
   public override void SetTileType(char typeChar) {
     tileType = TileTypes.Grass;
   }

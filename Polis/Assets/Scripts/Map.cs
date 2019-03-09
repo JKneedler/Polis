@@ -102,6 +102,11 @@ public class Map : MonoBehaviour {
       }
     }
 
+    public void SetTileFromMapPos(int x, int y, Tile newTile) {
+      int tileIndex = y * mapWidth + x;
+      tiles[tileIndex] = newTile;
+    }
+
     public TempTile[] ProceduralGenerateMapArray(int width, int height) {
       // Tile[] procedTiles = new Tile[width * height];
       TempTile[] procedTempTiles = new TempTile[width * height];
@@ -195,7 +200,7 @@ public class Map : MonoBehaviour {
         int treeType = Random.Range(0, 2);
         GameObject treeObj = (GameObject)Instantiate(treeModels[treeSize + (3*treeType)], new Vector3(posX, 0.05f, posY), resRot);
         treeObj.transform.parent = resourceParent;
-        TreeResource tree = treeObj.GetComponent<TreeResource>();
+        TreeResource tree = new TreeResource(treeObj);
         trees.Add(tree);
       }
       return trees;
@@ -260,5 +265,26 @@ public class Map : MonoBehaviour {
       } else {
         return true;
       }
+    }
+
+
+
+    public List<Tile> GetHoverTiles(Tile hoverT, Vector2 tileRotScale) {
+      List<Tile> newTiles = new List<Tile>();
+      Vector3 originalTileLoc3 = hoverT.GetWorldLoc();
+      Vector2 originalTileLoc = new Vector2(originalTileLoc3.x, originalTileLoc3.z);
+      for(int x = 0; x < Mathf.Abs(tileRotScale.x); x++) {
+        for(int y = 0; y < Mathf.Abs(tileRotScale.y); y++) {
+          int indexX = x;
+          int indexY = y;
+          if(tileRotScale.x < 0) indexX = -indexX;
+          if(tileRotScale.y < 0) indexY = -indexY;
+          int posX = (int)originalTileLoc.x + indexX;
+          int posY = (int)originalTileLoc.y + indexY;
+          Tile buildTile = GetTileFromWorldPos(posX, posY);
+          newTiles.Add(buildTile);
+        }
+      }
+      return newTiles;
     }
 }

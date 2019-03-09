@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8574867091466955283}
   - component: {fileID: 3116500406820167238}
   - component: {fileID: 5330833976158159024}
-  - component: {fileID: 5355422983926590902}
   m_Layer: 0
   m_Name: Woodcutter Lodge
   m_TagString: Untagged
@@ -63,31 +62,8 @@ MonoBehaviour:
   structureJob: 1
   maxWorkers: 3
   workers: []
-  tilesOn: []
-  tilesInRange: []
   tileRange: 2
   buildingType: 0
-  foresterData:
-    forestingRange: 2
-  farmData:
-    maxFarmingTiles: 0
-    farmingRange: 0
-    farmingTiles: []
---- !u!114 &5355422983926590902
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 167483532849077955}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0648608f268b14c86b487e6c17551149, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  title: Woodcutter Lodge
-  objectType: 1
-  description: Allows villagers to chop and collect wood
 --- !u!1 &4463422952505267901
 GameObject:
   m_ObjectHideFlags: 0

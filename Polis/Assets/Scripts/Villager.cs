@@ -4,66 +4,82 @@ using UnityEngine;
 
 public class Villager : MonoBehaviour {
 
-  // Should only be dictating how the person looks + UI information
-  public enum Jobs {Farmer, Fisher, Forester}
+  public enum Jobs {Citizen, Explorer, Farmer, Herder, Fisher, Adventurer, Miner, Priest}
   public Jobs curJob;
+  public BuildableTile workTile;
   public string villagerName;
-  public Process processOn;
   public Task curTask;
-  public bool hasTask;
-  public bool returningFromTask;
+  public Target curTarget;
   public float taskTimer;
   public float moveSpeed;
-  public bool atTarget = false;
-  public float minDist;
+  public bool atTarget;
 
+  // References
   public Transform target;
   private MasterManager mm;
   private TownManager tm;
 
-  //Use if(target == curStructure.gameObject.transform.position) to get whether out or back at structure
-
     void Start() {
       mm = GameObject.FindWithTag("GameController").GetComponent<MasterManager>();
       tm = mm.gameObject.GetComponent<TownManager>();
-      curTask = null;
-      hasTask = false;
+      if(curJob == Jobs.Citizen) {
+        GetNewTask(tm.RequestNextTask());
+      } else {
+        GetNewTask(workTile.RequestNextTask());
+      }
+      atTarget = false;
     }
 
     void Update() {
-      if(target && hasTask) {
-        if(!atTarget) {
-          atTarget = (Vector3.Distance(target.position, transform.position) <= minDist);
-          transform.position = Vector3.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
-        } else if(atTarget && taskTimer > 0 && !returningFromTask){
-          taskTimer -= Time.deltaTime;
-        } else if(atTarget && taskTimer < 0) {
-          Discipline disc = tm.GetDisciplineFromIndex((int)curJob);
-          if(returningFromTask) {
-            disc.VillagerCompletedTask(this);
-          } else {
-            if(curTask.GetContactDisciplineWhenReached()) disc.ReachedTaskTarget(this);
-            // target = curTask.GetReturnTargetWD().villagerTarget;
-            atTarget = false;
-            returningFromTask = true;
-          }
+      if(!atTarget) {
+        transform.position = Vector3.MoveTowards(transform.position, curTarget.location, moveSpeed * Time.deltaTime);
+        atTarget = (Vector3.Distance(curTarget.location, transform.position) <= curTarget.dist);
+        if(atTarget) {
+          GotToTarget();
+        }
+      } else if(atTarget && taskTimer > 0){
+        taskTimer -= Time.deltaTime;
+      } else if(atTarget && taskTimer <= 0) {
+        DoneAtTarget();
+      }
+    }
+
+    public void ChangeJob(Jobs newJob) {
+      curJob = newJob;
+    }
+
+    public void GetNewTask(Task newTask) {
+      curTask = newTask;
+      curTarget = curTask.GetNextTarget();
+      atTarget = false;
+    }
+
+    public void DoneAtTarget() {
+      if(curTarget.callWhenDone) {
+        curTarget.targetTile.FinishedTargetLocation(curTarget.targetTile, curTarget.targetTree);
+      }
+      Target nextTarget = curTask.GetNextTarget();
+      if(nextTarget != null) {
+        curTarget = nextTarget;
+        atTarget = false;
+      } else {
+        if(curJob != Jobs.Citizen) {
+          GetNewTask(workTile.RequestNextTask());
+        } else {
+          GetNewTask(tm.RequestNextTask());
         }
       }
     }
 
-    public void ChangedAssignment(Jobs newJob) {
-      curJob = newJob;
-      tm.GetDisciplineFromIndex((int)curJob).AttemptToGetNextTask(this);
+    public void GotToTarget() {
+      if(curTarget.callWhenReach) {
+        curTarget.targetTile.ReachedTargetLocation(curTarget.targetTile, curTarget.targetTree);
+      }
+      taskTimer = curTarget.duration;
     }
 
-    public void NewTask(Task newTask) {
-      curTask = newTask;
-      returningFromTask = false;
-      atTarget = false;
-      hasTask = true;
-      // target = curTask.GetTargetWD().villagerTarget;
-      taskTimer = curTask.GetTaskDuration();
-      Debug.Log("Got new Task");
+    public void SwitchTask(Task newTask) {
+      GetNewTask(newTask);
     }
 
 }

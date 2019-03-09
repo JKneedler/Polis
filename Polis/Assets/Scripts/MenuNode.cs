@@ -6,7 +6,8 @@ using UnityEngine;
 public class MenuNode {
 
   public int level;
-  public int parent;
-  public string name;
+  public Sprite icon;
+  public Building building;
+  public bool isLeaf;
 
 }
