@@ -95,7 +95,7 @@ public class BuildMode : MonoBehaviour {
         }
       }
       if(canBuild){
-        tileToBuild.PlaceTile(mapScript, buildingTiles, curRotAmt, curBuildRotScale);
+        tileToBuild.PlaceTile(tm, mapScript, buildingTiles, curRotAmt, curBuildRotScale);
         MoveSelectors();
       }
     }

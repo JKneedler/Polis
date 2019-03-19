@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Stone
   m_EditorClassIdentifier: 
   resourceName: Stone
-  amount: 0
-  resourceType: 2
+  subType: 0
+  baseType: 2
+  icon: {fileID: 0}

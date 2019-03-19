@@ -27,12 +27,16 @@ public class Map : MonoBehaviour {
   public float treePerlinCutoff;
   public AnimationCurve treeNumCurve;
 
+  public GameObject[] rockModels;
+  public int maxRocks;
+  public int minRocks;
+  public float rockPerlinScale;
+  public float rockPerlinCutoff;
+
   //private bool[,] map; //get rid of this for just the tiles array
   private Tile[] tiles;
   private int MAP_CORRECTION_WIDTH;
   private int MAP_CORRECTION_HEIGHT;
-  private float offsetX;
-  private float offsetY;
   private MapEditorConverter editorMap;
 
   public class TempTile {
@@ -49,17 +53,9 @@ public class Map : MonoBehaviour {
     }
   }
 
-  // private Tile[] coastTiles {
-  //   get{
-  //     return tempTiles.Where(t => t.GetAutoTileID() != 15).ToArray();
-  //   }
-  // }
-
     // Start is called before the first frame update
     void Start() {
       editorMap = gameObject.GetComponent<MapEditorConverter>();
-      offsetX = Random.Range(0f, 100f);
-      offsetY = Random.Range(0f, 100f);
       TempTile[] newTiles = new TempTile[0];
       if(useEditorMap) {
         mapWidth = (int)editorMap.mapSize.x;
@@ -119,12 +115,19 @@ public class Map : MonoBehaviour {
       }
       SetTileIDs(procedTempTiles);
       CreateCoast(procedTempTiles);
+      Vector2 treeOffset = new Vector2(Random.Range(0f, 1000f), Random.Range(0f, 1000f));
+      Vector2 rockOffset = new Vector2(Random.Range(0f, 1000f), Random.Range(0f, 1000f));
       for(int i = 0; i < procedTempTiles.Count(); i++) {
         if(procedTempTiles[i].autotileID != -1) {
           Vector2 tilePos = procedTempTiles[i].loc;
-          float val = Mathf.PerlinNoise(tilePos.x/treePerlinScale + offsetX, tilePos.y/treePerlinScale + offsetY);
+          float val = Mathf.PerlinNoise(tilePos.x/treePerlinScale + treeOffset.x, tilePos.y/treePerlinScale + treeOffset.y);
           if(val > treePerlinCutoff) {
             // Other Biome if I decide to put one in
+            float valRock = Mathf.PerlinNoise(tilePos.x/rockPerlinScale + rockOffset.x, tilePos.y/rockPerlinScale + rockOffset.y);
+            if(valRock > rockPerlinCutoff) {
+              procedTempTiles[i].numRes = minRocks + Mathf.RoundToInt(treeNumCurve.Evaluate(1 - (valRock/rockPerlinCutoff)) * (maxRocks - minRocks));
+              procedTempTiles[i].type = 'R';
+            }
           } else {
             //Forest Biome - separate texture for this possibly
             procedTempTiles[i].numRes = minTrees + Mathf.RoundToInt(treeNumCurve.Evaluate(1 - (val/treePerlinCutoff)) * (maxTrees - minTrees));
@@ -153,12 +156,12 @@ public class Map : MonoBehaviour {
           Quaternion tileRot = Quaternion.Euler(0, 90 * rotateAmt, 0);
           char tileType = tile.type;
           int tileAutoID = tile.autotileID;
-          if(tileType == 'F' && tileAutoID == 15) { // Forest Biome
+          if((tileType == 'F' || tileType == 'R') && tileAutoID == 15) { // Forest Biome
             GameObject tileObj = (GameObject)Instantiate(grassTiles[0], tilePos, tileRot);
             tileObj.transform.parent = transform;
-            List<TreeResource> trees = GenerateResources(tile, worldLoc2);
-            ForestTile fT = new ForestTile(tile.loc, worldLoc3, 'F', tileObj, trees);
-            newTiles[(mapWidth * y) + x] = fT;
+            List<WorldResource> tileResources = GenerateResources(tile, worldLoc2, (tileType == 'F'));
+            ResourceTile rT = new ResourceTile(tile.loc, worldLoc3, 'R', tileObj, tileResources, (tileType == 'F'));
+            newTiles[(mapWidth * y) + x] = rT;
           } else if(tileAutoID > -1) { // Grass and Coast Biome
             if(tileAutoID == 15) {
               float flowerPercent = Random.Range(0f, (float)grassTiles.Length);
@@ -186,24 +189,29 @@ public class Map : MonoBehaviour {
       tiles = newTiles;
     }
 
-    public List<TreeResource> GenerateResources(TempTile tile, Vector2 tileWorldPos) {
-      int treeAmt = tile.numRes;
-      List<TreeResource> trees = new List<TreeResource>();
-      for(int i = 0; i < treeAmt; i++) {
+    public List<WorldResource> GenerateResources(TempTile tile, Vector2 tileWorldPos, bool trees) {
+      int resourceAmt = tile.numRes;
+      List<WorldResource> tileResources = new List<WorldResource>();
+      for(int i = 0; i < resourceAmt; i++) {
         //Get Random Position on Tile
         float posX = Random.Range(tileWorldPos.x, tileWorldPos.x + 1);
         float posY = Random.Range(tileWorldPos.y, tileWorldPos.y + 1);
         float randRot = Random.Range(0, 360);
         Quaternion resRot = Quaternion.Euler(0, randRot, 0);
         //Determine Amount of Trees on Tile
-        int treeSize = Mathf.CeilToInt(Random.Range(0f, 1f) * ((float)treeAmt/(float)maxTrees) * 3) - 1;
+        int resourceSize = 0;
+        if(trees) resourceSize = Mathf.CeilToInt(Random.Range(0f, 1f) * ((float)resourceAmt/(float)maxTrees) * 3) - 1;
+        if(!trees) resourceSize = Mathf.CeilToInt(Random.Range(0f, 1f) * ((float)resourceAmt/(float)maxRocks) * 3) - 1;
         int treeType = Random.Range(0, 2);
-        GameObject treeObj = (GameObject)Instantiate(treeModels[treeSize + (3*treeType)], new Vector3(posX, 0.05f, posY), resRot);
-        treeObj.transform.parent = resourceParent;
-        TreeResource tree = new TreeResource(treeObj);
-        trees.Add(tree);
+        GameObject modelToUse = rockModels[0];
+        if(trees) modelToUse = treeModels[resourceSize + (3*treeType)];
+        if(!trees) modelToUse = rockModels[resourceSize];
+        GameObject resourceObj = (GameObject)Instantiate(modelToUse, new Vector3(posX, 0.05f, posY), resRot);
+        resourceObj.transform.parent = resourceParent;
+        WorldResource res = new WorldResource(resourceObj);
+        tileResources.Add(res);
       }
-      return trees;
+      return tileResources;
     }
 
     private List<TempTile> FindCoastTiles(TempTile[] mapTiles) {

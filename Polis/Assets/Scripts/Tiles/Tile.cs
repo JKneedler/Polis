@@ -10,7 +10,7 @@ public class Tile {
   protected char type;
   protected GameObject tileObj;
 
-  public enum TileTypes{Grass, Forest, Coast, Ocean, Building, BuildingChild};
+  public enum TileTypes{Grass, Resource, Coast, Ocean, Building, BuildingChild};
   protected TileTypes tileType;
 
   public Tile(Vector2 mapLoc, Vector3 worldLoc, char type, GameObject tileObj) {
@@ -61,10 +61,10 @@ public class Tile {
     GameObject.Destroy(tileObj);
   }
 
-  public virtual void ReachedTargetLocation(Tile targetTile, TreeResource targetTree) {
+  public virtual void ReachedTargetLocation(Tile targetTile, WorldResource targetResource) {
   }
 
-  public virtual void FinishedTargetLocation(Tile targetTile, TreeResource targetTree) {
+  public virtual void FinishedTargetLocation(Tile targetTile, WorldResource targetResource) {
   }
 
 }

@@ -6,24 +6,23 @@ using UnityEngine;
 public class Resource : ScriptableObject {
 
 	public string resourceName;
-	public int amount;
-	public enum ResourceTypes{Food, Wood, Stone};
-	public ResourceTypes resourceType;
+	public enum SubTypes{Farming, Livestock, Fishing, Mining};
+	public enum BaseTypes{Food, Wood, Stone, None};
+	public SubTypes subType;
+	public BaseTypes baseType;
+	public Sprite icon;
 
-	public int GetAmount() {
-		return amount;
+
+	public BaseTypes GetBaseType() {
+		return baseType;
 	}
 
-	public void AddAmount(int amt) {
-		amount += amt;
+	public SubTypes GetSubType() {
+		return subType;
 	}
 
-	public void RemoveAmount(int amt) {
-		amount -= amt;
-	}
-
-	public ResourceTypes GetResourceType() {
-		return resourceType;
+	public Sprite GetIcon() {
+		return icon;
 	}
 
 }

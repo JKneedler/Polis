@@ -10,14 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f4a698d9de98914a9b8dd657ba72368, type: 3}
-  m_Name: Test1
+  m_Name: Crop - Apple
   m_EditorClassIdentifier: 
-  buildingType: 0
+  buildingType: 3
   buildingTile:
-    scale: {x: 1, y: 1}
-    tileStages:
-    - tilePrefabs:
-      - {fileID: 3823677723018293820, guid: 7ed68383c666ec74daa193411e647037, type: 3}
+    scale: {x: 0, y: 0}
+    tileStages: []
     buildOnTileType: 0
     needsBuilt: 0
     preBuiltPrefabs: []
@@ -33,13 +31,25 @@ MonoBehaviour:
     bType: 0
     mapScript: {fileID: 0}
   cropTile:
-    scale: {x: 0, y: 0}
-    tileStages: []
+    scale: {x: 1, y: 1}
+    tileStages:
+    - tilePrefabs:
+      - {fileID: 4838089749677236023, guid: c20b5d220e9ae4170b2868ec38d23a27, type: 3}
+    - tilePrefabs:
+      - {fileID: 6527399187238642042, guid: 7cbf362ab27ea47cbac362da2719b613, type: 3}
+    - tilePrefabs:
+      - {fileID: 1211750655781381206, guid: 4405f075ebd614a02bdde2aa4b939b2a, type: 3}
+    - tilePrefabs:
+      - {fileID: 7346095797517511019, guid: 9e75f92cc7aec4e2f96d1fe0d9da7b91, type: 3}
     buildOnTileType: 0
     needsBuilt: 0
     preBuiltPrefabs: []
-    requiredJob: 0
-    bType: 0
+    requiredJob: 2
+    bType: 3
     crop: {fileID: 0}
-    growTime: 0
-    stageTimes: []
+    growTime: 15
+    stageTimes:
+    - 0
+    - 5
+    - 10
+    - 15

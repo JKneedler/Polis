@@ -12,13 +12,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f4a698d9de98914a9b8dd657ba72368, type: 3}
   m_Name: Test2
   m_EditorClassIdentifier: 
+  buildingType: 0
   buildingTile:
     scale: {x: 2, y: 2}
-    tilePrefabs:
-    - {fileID: 3823677723018293820, guid: aacb033e78800274696d0dab38f4930f, type: 3}
-    - {fileID: 3823677723018293820, guid: fe6f124fa572ea344bd859d1a06347d5, type: 3}
-    - {fileID: 3823677723018293820, guid: 7ed68383c666ec74daa193411e647037, type: 3}
-    - {fileID: 3823677723018293820, guid: dbfb18219e90ea445ae4cc6a7cfc47ed, type: 3}
+    tileStages:
+    - tilePrefabs:
+      - {fileID: 3823677723018293820, guid: 7ed68383c666ec74daa193411e647037, type: 3}
+      - {fileID: 3823677723018293820, guid: aacb033e78800274696d0dab38f4930f, type: 3}
+      - {fileID: 3823677723018293820, guid: fe6f124fa572ea344bd859d1a06347d5, type: 3}
+      - {fileID: 3823677723018293820, guid: dbfb18219e90ea445ae4cc6a7cfc47ed, type: 3}
     buildOnTileType: 0
     needsBuilt: 0
     preBuiltPrefabs: []
+    requiredJob: 2
+    bType: 0
+  chopTreesTile:
+    scale: {x: 0, y: 0}
+    tileStages: []
+    buildOnTileType: 0
+    needsBuilt: 0
+    preBuiltPrefabs: []
+    requiredJob: 0
+    bType: 0
+    mapScript: {fileID: 0}
+  cropTile:
+    scale: {x: 0, y: 0}
+    tileStages: []
+    buildOnTileType: 0
+    needsBuilt: 0
+    preBuiltPrefabs: []
+    requiredJob: 0
+    bType: 0
+    crop: {fileID: 0}
+    growTime: 0
+    stageTimes: []

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class TreeResource {
+public class WorldResource {
 
-  private GameObject treeObj;
+  private GameObject resObj;
 
-  public TreeResource(GameObject treeObj) {
-    this.treeObj = treeObj;
+  public WorldResource(GameObject resObj) {
+    this.resObj = resObj;
   }
 
   public GameObject GetResourceObject() {
-    return treeObj;
+    return resObj;
   }
 }

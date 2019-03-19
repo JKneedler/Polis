@@ -22,6 +22,14 @@ public class UIManager : MonoBehaviour {
   public UIMenuLevel curMenuNode;
   public int curLevelInt;
 
+  public GameObject villagerPanel;
+
+  public GameObject resourcesPanel;
+  public GameObject resourcesContainer;
+  public GameObject resourceBarPre;
+  public GameObject resourceElementPre;
+  public Dictionary<Resource, GameObject> resElements;
+
   // References
   public MasterManager mm;
   BuildingSelectorUI bsUI;
@@ -122,6 +130,7 @@ public class UIManager : MonoBehaviour {
       if(buildMenuContainer.activeSelf) {
         HideBuildMenu();
       } else {
+        HideVillagerPanel();
         buildMenuContainer.SetActive(true);
         bsUI.HideSelectorPanel();
       }
@@ -136,6 +145,66 @@ public class UIManager : MonoBehaviour {
       }
       buildMenuContainer.SetActive(false);
       curLevelInt = 1;
+    }
+
+    public void ShowVillagerPanel() {
+      if(villagerPanel.activeSelf) {
+        HideVillagerPanel();
+      } else {
+        HideBuildMenu();
+        villagerPanel.SetActive(true);
+        bsUI.HideSelectorPanel();
+      }
+    }
+
+    public void HideVillagerPanel() {
+      villagerPanel.SetActive(false);
+    }
+
+    public void ShowResourcesPanel() {
+      resourcesPanel.SetActive(!resourcesPanel.activeSelf);
+    }
+
+    public void InitializeResourcesPanel(List<ResourceStorage> res) {
+      resElements = new Dictionary<Resource, GameObject>();
+      for(int i = 0; i < res.Count; i++) {
+        NewResource(res[i]);
+      }
+      resourcesContainer.GetComponent<LayoutGroup>().SetLayoutVertical();
+      LayoutRebuilder.ForceRebuildLayoutImmediate(resourcesContainer.GetComponent<RectTransform>());
+      resourcesPanel.GetComponent<LayoutGroup>().SetLayoutVertical();
+      LayoutRebuilder.ForceRebuildLayoutImmediate(resourcesPanel.GetComponent<RectTransform>());
+    }
+
+    public void NewResource(ResourceStorage newRes) {
+      int subType = (int)newRes.res.GetSubType();
+      Transform typeCont = resourcesContainer.transform.GetChild(subType);
+      Transform newResParent = typeCont;
+      if(typeCont.childCount == 0 || typeCont.GetChild(typeCont.childCount - 1).childCount == 3) {
+        GameObject newBar = (GameObject)Instantiate(resourceBarPre, transform.position, transform.rotation);
+        newResParent = newBar.transform;
+        newResParent.SetParent(typeCont, false);
+      } else {
+        newResParent = typeCont.GetChild(typeCont.childCount - 1);
+      }
+      GameObject newResElement = (GameObject)Instantiate(resourceElementPre, transform.position, transform.rotation);
+      newResElement.transform.SetParent(newResParent);
+      newResElement.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = newRes.res.GetIcon();
+      newResElement.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = newRes.amount + "";
+      resElements.Add(newRes.res, newResElement);
+      typeCont.GetComponent<LayoutGroup>().SetLayoutVertical();
+      LayoutRebuilder.ForceRebuildLayoutImmediate(typeCont.GetComponent<RectTransform>());
+      resourcesContainer.GetComponent<LayoutGroup>().SetLayoutVertical();
+      LayoutRebuilder.ForceRebuildLayoutImmediate(resourcesContainer.GetComponent<RectTransform>());
+      resourcesPanel.GetComponent<LayoutGroup>().SetLayoutVertical();
+      LayoutRebuilder.ForceRebuildLayoutImmediate(resourcesPanel.GetComponent<RectTransform>());
+    }
+
+    public void UpdateResourceValue(ResourceStorage updateRes) {
+      GameObject updateResElement = resElements[updateRes.res];
+      if(updateResElement) {
+        updateResElement.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = updateRes.amount + "";
+      }
     }
 
     public void SetFood(int total) {

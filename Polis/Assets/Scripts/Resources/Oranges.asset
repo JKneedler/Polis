@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5de2f584066a442a1b1fca64a8da77f0, type: 3}
-  m_Name: Wood
+  m_Name: Oranges
   m_EditorClassIdentifier: 
-  resourceName: Wood
+  resourceName: orange
   subType: 0
-  baseType: 1
-  icon: {fileID: 0}
+  baseType: 0
+  icon: {fileID: 21300000, guid: 33b83751ebd925f42af5a0824ec57a9f, type: 3}

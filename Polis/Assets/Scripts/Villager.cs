@@ -42,10 +42,12 @@ public class Villager : MonoBehaviour {
       } else if(atTarget && taskTimer <= 0) {
         DoneAtTarget();
       }
+      workTile.Update();
     }
 
-    public void ChangeJob(Jobs newJob) {
-      curJob = newJob;
+    public void AssignToTile(BuildableTile newTile) {
+      workTile = newTile;
+      curJob = newTile.GetRequiredJobType();
     }
 
     public void GetNewTask(Task newTask) {
@@ -56,7 +58,7 @@ public class Villager : MonoBehaviour {
 
     public void DoneAtTarget() {
       if(curTarget.callWhenDone) {
-        curTarget.targetTile.FinishedTargetLocation(curTarget.targetTile, curTarget.targetTree);
+        curTarget.targetTile.FinishedTargetLocation(curTarget.targetTile, curTarget.targetResource);
       }
       Target nextTarget = curTask.GetNextTarget();
       if(nextTarget != null) {
@@ -73,7 +75,7 @@ public class Villager : MonoBehaviour {
 
     public void GotToTarget() {
       if(curTarget.callWhenReach) {
-        curTarget.targetTile.ReachedTargetLocation(curTarget.targetTile, curTarget.targetTree);
+        curTarget.targetTile.ReachedTargetLocation(curTarget.targetTile, curTarget.targetResource);
       }
       taskTimer = curTarget.duration;
     }

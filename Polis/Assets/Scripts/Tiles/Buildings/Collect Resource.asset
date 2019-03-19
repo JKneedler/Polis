@@ -10,20 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f4a698d9de98914a9b8dd657ba72368, type: 3}
-  m_Name: Test1
+  m_Name: Collect Resource
   m_EditorClassIdentifier: 
-  buildingType: 0
+  buildingType: 1
   buildingTile:
-    scale: {x: 1, y: 1}
-    tileStages:
-    - tilePrefabs:
-      - {fileID: 3823677723018293820, guid: 7ed68383c666ec74daa193411e647037, type: 3}
-    buildOnTileType: 0
-    needsBuilt: 0
-    preBuiltPrefabs: []
-    requiredJob: 0
-    bType: 0
-  chopTreesTile:
     scale: {x: 0, y: 0}
     tileStages: []
     buildOnTileType: 0
@@ -31,7 +21,24 @@ MonoBehaviour:
     preBuiltPrefabs: []
     requiredJob: 0
     bType: 0
+    tm: {fileID: 0}
+  collectResourceTile:
+    scale: {x: 1, y: 1}
+    tileStages: []
+    buildOnTileType: 1
+    needsBuilt: 0
+    preBuiltPrefabs: []
+    requiredJob: 0
+    bType: 1
+    tm: {fileID: 0}
     mapScript: {fileID: 0}
+    woodRes:
+      res: {fileID: 11400000, guid: 5b026eb1820041d4fbfe6469db71f975, type: 2}
+      amount: 10
+    stoneRes:
+      res: {fileID: 11400000, guid: 93fdc22b3bb002f4890507379aec2f12, type: 2}
+      amount: 5
+    isTrees: 0
   cropTile:
     scale: {x: 0, y: 0}
     tileStages: []
@@ -40,6 +47,7 @@ MonoBehaviour:
     preBuiltPrefabs: []
     requiredJob: 0
     bType: 0
+    tm: {fileID: 0}
     crop: {fileID: 0}
     growTime: 0
     stageTimes: []

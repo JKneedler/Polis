@@ -2,20 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[System.Serializable]
+public class ResourceStorage {
+  public Resource res;
+  public int amount;
+}
+
 public class TownManager : MonoBehaviour {
 
   public int foodTotal;
-  public int woodTotal;
-  public int stoneTotal;
   public int drachmaTotal;
   private UIManager ui;
+  MasterManager mm;
   public GameObject canvas;
   public JobWorkers[] villagers;
   public List<Task> citizenTasks;
   public List<BuildableTile> builtTiles;
-  public List<Resource> resources;
-  public Resource wood;
-  public Resource stone;
+  public List<ResourceStorage> resources;
+  public ResourceStorage woodRes;
+  public ResourceStorage stoneRes;
+  public List<ResourceTile> resTiles;
+
+  public Vector3 tempStorageLoc;
 
   [System.Serializable]
   public class JobWorkers {
@@ -24,6 +33,7 @@ public class TownManager : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+      mm = gameObject.GetComponent<MasterManager>();
       ui = canvas.GetComponent<UIManager>();
       SetUI();
     }
@@ -34,20 +44,19 @@ public class TownManager : MonoBehaviour {
     }
 
     void SetUI() {
-      // ui.SetPopulation(villagers[0].Count);
       ui.SetFood(foodTotal);
-      ui.SetWood(wood.GetAmount());
-      ui.SetStone(stone.GetAmount());
       ui.SetDrachma(drachmaTotal);
-
+      ui.SetWood(woodRes.amount);
+      ui.SetStone(woodRes.amount);
+      ui.InitializeResourcesPanel(resources);
     }
 
     void SetFoodTotal() {
       int newTotal = 0;
       for(int i = 0; i < resources.Count; i++) {
-        if(resources[i].GetResourceType() == Resource.ResourceTypes.Food) {
-          newTotal += resources[i].GetAmount();
-        }
+        // if(resources[i].GetResourceType() == Resource.ResourceTypes.Food) {
+        //   newTotal += resources[i].GetAmount();
+        // }
       }
       foodTotal = newTotal;
       SetUI();
@@ -89,6 +98,59 @@ public class TownManager : MonoBehaviour {
         }
       }
       if(!given) citizenTasks.Add(newTask);
+    }
+
+    public List<Villager> GetPossibleWorkers(Villager.Jobs jType) {
+      List<Villager> possibleWorkers = new List<Villager>();
+      for(int i = 0; i < villagers[0].workers.Count; i++) {
+        possibleWorkers.Add(villagers[0].workers[i]);
+      }
+      for(int i = 0; i < villagers[(int)jType].workers.Count; i++) {
+        possibleWorkers.Add(villagers[(int)jType].workers[i]);
+      }
+      return possibleWorkers;
+    }
+
+    public void AssignVillagerToTile(Villager vill, BuildableTile bTile) {
+      bTile.AssignedVillager(vill);
+    }
+
+    public void AddBuilding(BuildableTile bTile) {
+      builtTiles.Add(bTile);
+    }
+
+    public void AddResource(ResourceStorage newRes) {
+      int baseType = (int)newRes.res.GetBaseType();
+      if(baseType == 1) {
+        woodRes.amount += newRes.amount;
+        ui.SetWood(woodRes.amount);
+      } else if(baseType == 2) {
+        stoneRes.amount += newRes.amount;
+        ui.SetStone(stoneRes.amount);
+      } else {
+        int resIndex = GetResourceIndex(newRes);
+        if(resIndex == -1) {
+          resources.Add(newRes);
+          ui.NewResource(newRes);
+        } else {
+          if(baseType == 0) {
+            foodTotal += newRes.amount;
+            ui.SetFood(foodTotal);
+          }
+          resources[resIndex].amount += newRes.amount;
+          ui.UpdateResourceValue(resources[resIndex]);
+        }
+      }
+    }
+
+    public int GetResourceIndex(ResourceStorage indRes) {
+      int index = -1;
+      for(int i = 0; i < resources.Count; i++) {
+        if(resources[i].res == indRes.res) {
+          index = i;
+        }
+      }
+      return index;
     }
 
 }

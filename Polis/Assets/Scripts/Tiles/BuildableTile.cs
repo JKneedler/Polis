@@ -9,7 +9,7 @@ public class BuildableTile : Tile {
   protected Vector2 scale;
   protected Vector2 rotatedScale;
   [SerializeField]
-  protected GameObject[] tilePrefabs;
+  protected BuildingStage[] tileStages;
   protected List<BuildableTileChild> childrenTiles;
   [SerializeField]
   protected TileTypes buildOnTileType;
@@ -23,6 +23,12 @@ public class BuildableTile : Tile {
   protected Villager.Jobs requiredJob;
   [SerializeField]
   protected Building.BuildingTypes bType;
+  public TownManager tm;
+
+  [System.Serializable]
+  public class BuildingStage {
+    public GameObject[] tilePrefabs;
+  }
 
   public BuildableTile(Vector2 mapLoc, Vector3 worldLoc, char type, GameObject tileObj, Vector2 scale)
   : base(mapLoc, worldLoc, type, tileObj) {
@@ -39,9 +45,12 @@ public class BuildableTile : Tile {
     // Copy all necessary attributes of the tileToCopy
     // Can override this on inherited class to copy all attributes
     this.scale = tileToCopy.GetScale();
-    this.tilePrefabs = tileToCopy.GetTilePrefabs();
+    this.tileStages = tileToCopy.GetTileStages();
     this.needsBuilt = tileToCopy.GetNeedsBuilt();
     this.preBuiltPrefabs = tileToCopy.GetPreBuiltPrefabs();
+    this.requiredJob = tileToCopy.GetRequiredJobType();
+    this.bType = tileToCopy.GetBuildingType();
+    this.workers = new List<Villager>();
   }
 
   public override void SetTileType(char typeChar) {
@@ -64,8 +73,8 @@ public class BuildableTile : Tile {
     return buildOnTileType;
   }
 
-  public GameObject[] GetTilePrefabs() {
-    return tilePrefabs;
+  public BuildingStage[] GetTileStages() {
+    return tileStages;
   }
 
   public bool GetNeedsBuilt() {
@@ -74,6 +83,10 @@ public class BuildableTile : Tile {
 
   public GameObject[] GetPreBuiltPrefabs() {
     return preBuiltPrefabs;
+  }
+
+  public Villager.Jobs GetRequiredJobType() {
+    return requiredJob;
   }
 
   public Building.BuildingTypes GetBuildingType() {
@@ -88,7 +101,7 @@ public class BuildableTile : Tile {
     childrenTiles.Add(newChild);
   }
 
-  public virtual void PlaceTile(Map map, List<Tile> buildingTiles, int rotAmt, Vector2 curBuildRotScale) {
+  public virtual void PlaceTile(TownManager tm, Map map, List<Tile> buildingTiles, int rotAmt, Vector2 curBuildRotScale) {
     // Decide how to handle the placing of the tile
     BuildableTile bMain = new BuildableTile(buildingTiles[0].GetMapLoc(), buildingTiles[0].GetWorldLoc(), 'B', null, this);
     bMain.rotatedScale = curBuildRotScale;
@@ -109,7 +122,7 @@ public class BuildableTile : Tile {
       } else {
         // Wait for worker to be assigned to the tile
         buildingTiles[i].DestroyTileObject();
-        newTileObj = (GameObject)GameObject.Instantiate(tilePrefabs[i], adjustedObjPos, tileRot);
+        newTileObj = (GameObject)GameObject.Instantiate(tileStages[0].tilePrefabs[i], adjustedObjPos, tileRot);
         newTileObj.transform.parent = map.gameObject.transform;
       }
       if(i == 0) {
@@ -128,6 +141,7 @@ public class BuildableTile : Tile {
       // Call BeginBuildPhase(citizen)
     }
     bMain.PlacedTile();
+    tm.AddBuilding(bMain);
   }
 
   public virtual void PlacedTile() {
@@ -151,16 +165,20 @@ public class BuildableTile : Tile {
     // Give the citizen tasks to 'build' this building
   }
 
-  public override void ReachedTargetLocation(Tile targetTile, TreeResource targetTree) {
+  public override void ReachedTargetLocation(Tile targetTile, WorldResource targetResource) {
 
   }
 
-  public override void FinishedTargetLocation(Tile targetTile, TreeResource targetTree) {
+  public override void FinishedTargetLocation(Tile targetTile, WorldResource targetResource) {
 
   }
 
   public virtual Task RequestNextTask() {
     return null;
+  }
+
+  public virtual void Update() {
+
   }
 
 }

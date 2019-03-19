@@ -34,7 +34,7 @@ public class Target {
 
   public Vector3 location;
   public Tile targetTile;
-  public TreeResource targetTree;
+  public WorldResource targetResource;
   public Animation anim;
   public float duration;
   public bool callWhenReach;
@@ -44,7 +44,7 @@ public class Target {
   public Target(Vector3 location, Animation anim, float duration, bool callWhenReach, bool callWhenDone) {
     this.location = location;
     this.targetTile = null;
-    this.targetTree = null;
+    this.targetResource = null;
     this.anim = anim;
     this.duration = duration;
     this.callWhenReach = callWhenReach;
@@ -55,7 +55,7 @@ public class Target {
   public Target(Vector3 location, Tile targetTile, Animation anim, float duration, bool callWhenReach, bool callWhenDone) {
     this.location = location;
     this.targetTile = targetTile;
-    this.targetTree = null;
+    this.targetResource = null;
     this.anim = anim;
     this.duration = duration;
     this.callWhenReach = callWhenReach;
@@ -63,10 +63,10 @@ public class Target {
     this.dist = 0.5f;
   }
 
-  public Target(Vector3 location, TreeResource targetTree, Animation anim, float duration, bool callWhenReach, bool callWhenDone) {
+  public Target(Vector3 location, WorldResource targetResource, Animation anim, float duration, bool callWhenReach, bool callWhenDone) {
     this.location = location;
     this.targetTile = null;
-    this.targetTree = targetTree;
+    this.targetResource = targetResource;
     this.anim = anim;
     this.duration = duration;
     this.callWhenReach = callWhenReach;
@@ -74,10 +74,10 @@ public class Target {
     this.dist = 0.5f;
   }
 
-  public Target(Vector3 location, Tile targetTile, TreeResource targetTree, Animation anim, float duration, bool callWhenReach, bool callWhenDone) {
+  public Target(Vector3 location, Tile targetTile, WorldResource targetResource, Animation anim, float duration, bool callWhenReach, bool callWhenDone) {
     this.location = location;
     this.targetTile = targetTile;
-    this.targetTree = targetTree;
+    this.targetResource = targetResource;
     this.anim = anim;
     this.duration = duration;
     this.callWhenReach = callWhenReach;
@@ -88,7 +88,7 @@ public class Target {
   public Target(Vector3 location, bool callWhenDone) {
     this.location = location;
     this.targetTile = null;
-    this.targetTree = null;
+    this.targetResource = null;
     this.anim = null;
     this.duration = 0f;
     this.callWhenReach = false;
