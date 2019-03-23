@@ -80,15 +80,7 @@ public class Map : MonoBehaviour {
 
     }
 
-    public bool GetMapValueFromWorldCoord(int x, int y) {
-      //Get rid of this method once building is fixed
-      return true;
-    }
-
-    public void SetMapValue(int x, int y, bool newValue) {
-      //Get rid of this method
-    }
-
+    // Same as val from GetWorldLoc from tile
     public Tile GetTileFromWorldPos(int x, int y) {
       if(x > (-(mapWidth/2) - 1) && x < (mapWidth/2) && y > (-(mapHeight/2) - 1) && y < (mapHeight/2)) {
         int tileIndex = (y + MAP_CORRECTION_HEIGHT) * mapWidth + (x + MAP_CORRECTION_WIDTH);

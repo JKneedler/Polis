@@ -6,7 +6,6 @@ public class ResourceTile : Tile {
 
   protected List<WorldResource> resources;
   protected bool isTrees;
-  protected bool canSpread;
 
   public ResourceTile(Vector2 mapLoc, Vector3 worldLoc, char type, GameObject tileObj, List<WorldResource> resources, bool isTrees)
   : base(mapLoc, worldLoc, type, tileObj) {

@@ -22,7 +22,6 @@ public class TownManager : MonoBehaviour {
   public List<ResourceStorage> resources;
   public ResourceStorage woodRes;
   public ResourceStorage stoneRes;
-  public List<ResourceTile> resTiles;
 
   public Vector3 tempStorageLoc;
 
@@ -54,9 +53,9 @@ public class TownManager : MonoBehaviour {
     void SetFoodTotal() {
       int newTotal = 0;
       for(int i = 0; i < resources.Count; i++) {
-        // if(resources[i].GetResourceType() == Resource.ResourceTypes.Food) {
-        //   newTotal += resources[i].GetAmount();
-        // }
+        if(resources[i].res.GetBaseType() == Resource.BaseTypes.Food) {
+          newTotal += resources[i].amount;
+        }
       }
       foodTotal = newTotal;
       SetUI();
